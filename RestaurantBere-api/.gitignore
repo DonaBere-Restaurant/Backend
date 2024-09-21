@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+###Paypal credentials
+*.env
 
 ### NetBeans ###
 /nbproject/private/
