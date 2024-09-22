@@ -38,9 +38,15 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDTO> createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
-        CustomerResponseDTO customer = customerServiceimpl.createCustomer(customerRequestDTO);
-        return new ResponseEntity<>(customer, HttpStatus.CREATED);
+    public ResponseEntity<String> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+        try{
+            customerServiceimpl.createCustomer(customerRequestDTO);
+            return new ResponseEntity<>("Cuenta creada con éxito", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{id}")
