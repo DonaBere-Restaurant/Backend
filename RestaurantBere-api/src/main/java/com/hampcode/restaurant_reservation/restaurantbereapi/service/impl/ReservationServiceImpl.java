@@ -2,8 +2,10 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.exception.ResourceNotFoundException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationDishesRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ReservationRespository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
@@ -41,17 +43,31 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public ReservationResponseDTO addTables(ReservationTablesRequestDTO reservatioRequestTablesDTO) {
+        Reservation reservation = reservationMapper.convertToEntity(reservatioRequestTablesDTO);
+        reservationRespository.save(reservation);
+        return reservationMapper.convertToDTO(reservation);
+    }
+
+    @Override
+    public ReservationResponseDTO addDishes(ReservationDishesRequestDTO reservationRequestDishesDTO) {
+       Reservation reservation = reservationMapper.convertToEntity(reservationRequestDishesDTO);
+       reservationRespository.save(reservation);
+       return reservationMapper.convertToDTO(reservation);
+    }
+
+    @Override
     public ReservationResponseDTO updateReservation(int id, ReservationRequestDTO reservationRequestDTO) {
         Reservation reservation = reservationRespository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cuenta no encontrada con el numero:"+id));
         if(reservationRequestDTO.getDate() != null)reservation.setDate(reservationRequestDTO.getDate());
         if(reservationRequestDTO.getGuestNumber()!=0)reservation.setGuestNumber(reservationRequestDTO.getGuestNumber());
         if(reservationRequestDTO.getStartTime()!=null)reservation.setStartTime(reservationRequestDTO.getStartTime());
-        if(reservationRequestDTO.getEndTime()!=null)reservation.setEndTime(reservationRequestDTO.getEndTime());
-
         reservation  = reservationRespository.save(reservation);
 
         return reservationMapper.convertToDTO(reservation);
     }
+
+
 
     @Override
     public void deleteReservation(int id) {

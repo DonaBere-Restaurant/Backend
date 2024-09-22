@@ -25,7 +25,7 @@ public class Reservation {
     @Column(name = "res_date_dt", nullable = false)
     private LocalDate date;
 
-    @Column(name = "res_ges_num_in", nullable = false)
+    @Column(name = "res_ges_num_in", nullable = true)
     private int guestNumber;
 
     @Column(name = "res_start_time_tm",nullable = false)
@@ -41,7 +41,8 @@ public class Reservation {
     @JoinColumn(name = "customer_cus_id_in", nullable = false)
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "table_tab_id_in", nullable = false)
-    private ResTable resTable;
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private List<ReservationTable> reservationTables;
+    @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL)
+    private List<Order> orderDishes;
 }

@@ -1,14 +1,13 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -16,12 +15,12 @@ import java.time.LocalTime;
 public class ReservationResponseDTO {
     private int id;
     private LocalDate date;
-    private int guestNumber;
+    private Customer customer;
     private LocalTime startTime;
     private LocalTime endTime;
+    private List<ReservationTable> tables;
+    private int guestNumber;
+    private List<Order> orderDishes;
     private double priceTotal;
-    private Customer customer;
-    private ResTable resTable;
-    private Dish dish;
 
 }

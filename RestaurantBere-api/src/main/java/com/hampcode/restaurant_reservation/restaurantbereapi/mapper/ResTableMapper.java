@@ -23,7 +23,9 @@ public class ResTableMapper {
     public ResTableResponseDTO convertToDTO(ResTable resTable) {
         return modelMapper.map(resTable, ResTableResponseDTO.class);
     }
-
+    public ResTableRequestDTO converToDTO(ResTable resTable) {
+        return modelMapper.map(resTable, ResTableRequestDTO.class);
+    }
     public List<ResTableResponseDTO> convertToListDTO(List<ResTable> resTables) {
         return resTables.stream()
                 .map(this::convertToDTO)

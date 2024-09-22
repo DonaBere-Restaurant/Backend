@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -48,6 +49,18 @@ public class ResTableServiceImpl implements ResTableService {
 
         resTable = resTableRepository.save(resTable);
         return resTableMapper.convertToDTO(resTable);
+    }
+
+    public void updateResTables(List<ResTableRequestDTO> resTableRequestDTOs) {
+        List<ResTable> resTables = new ArrayList<>();
+
+        for (ResTableRequestDTO dto : resTableRequestDTOs) {
+            ResTable resTable = resTableMapper.convertToEntity(dto);
+            resTables.add(resTable);
+        }
+
+        // Llama al repositorio para hacer la actualización en batch
+        resTableRepository.saveAll(resTables);
     }
 
     @Transactional

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResTableRequestDTO {
 
-    @NotNull(message = "La capacidad no puede estar vacia")
     private int capacity;
 
     @NotNull(message = "El estado de la mesa no puede estar vacio")

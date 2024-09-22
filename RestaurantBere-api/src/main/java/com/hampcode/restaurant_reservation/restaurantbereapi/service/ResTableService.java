@@ -13,5 +13,6 @@ public interface ResTableService {
     public ResTableResponseDTO getResTableById(int id);
     public ResTableResponseDTO createResTable(ResTableRequestDTO resTableRequestDTO);
     public ResTableResponseDTO updateResTable(int id, ResTableRequestDTO resTableRequestDTO);
+    public void updateResTables(List<ResTableRequestDTO> resTableRequestDTOs);
     public void deleteResTable (int id);
 }
