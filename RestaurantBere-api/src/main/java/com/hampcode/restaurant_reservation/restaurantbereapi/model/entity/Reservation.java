@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Data
@@ -18,10 +19,10 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rest_id_int")
+    @Column(name = "res_id_in")
     private int id;
 
-    @Column(name = "rest_date_dt", nullable = false)
+    @Column(name = "res_date_dt", nullable = false)
     private LocalDate date;
 
     @Column(name = "res_ges_num_in", nullable = false)
@@ -43,9 +44,4 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "table_tab_id_in", nullable = false)
     private ResTable resTable;
-
-    @ManyToOne
-    @JoinColumn(name = "dish_di_id_in", nullable = false)
-    private Dish dish;
-
 }
