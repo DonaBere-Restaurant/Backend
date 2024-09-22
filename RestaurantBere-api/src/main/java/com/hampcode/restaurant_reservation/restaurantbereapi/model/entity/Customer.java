@@ -29,8 +29,11 @@ public class Customer {
     @Column(name = "cus_pho_in")
     private int phone;
 
-    @Column(name = "cus_mail_vc")
+    @Column(name = "cus_mail_vc", nullable = false)
     private String email;
+
+    @Column(name = "cus_pas_vc", nullable = false)
+    private String password;
 
     @Column(name = "cus_add_vc")
     private String address;

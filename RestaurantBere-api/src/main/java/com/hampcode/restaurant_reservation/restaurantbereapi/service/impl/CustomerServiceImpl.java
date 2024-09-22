@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -34,16 +36,21 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
-        Customer customer = customerMapper.convertToEntity(customerRequestDTO);
-        customerRepository.save(customer);
-        return customerMapper.convertToDTO(customer);
+
+        if(customerRepository.findByEmail(customerRequestDTO.getEmail()).isPresent()){
+            throw new RuntimeException("El correo ya está en uso");
+        }else {
+            Customer customer = customerMapper.convertToEntity(customerRequestDTO);
+            customer.setRegisterDate(LocalDate.now());
+            customerRepository.save(customer);
+            return customerMapper.convertToDTO(customer);
+        }
     }
 
     @Transactional
     public CustomerResponseDTO updateCustomer(int id, CustomerRequestDTO customerRequestDTO) {
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado con el numero:"+id));
         if(customerRequestDTO.getDni() != null)customer.setDni(customerRequestDTO.getDni());
-        if(customerRequestDTO.getRegisterDate() != null)customer.setRegisterDate(customerRequestDTO.getRegisterDate());
         if(customerRequestDTO.getPhone() != 0)customer.setPhone(customerRequestDTO.getPhone());
         if(customerRequestDTO.getEmail() != null)customer.setEmail(customerRequestDTO.getEmail());
         if(customerRequestDTO.getAddress() != null)customer.setAddress(customerRequestDTO.getAddress());

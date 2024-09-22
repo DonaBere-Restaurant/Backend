@@ -19,13 +19,17 @@ public class CustomerRequestDTO {
     @Pattern(regexp = "[0-9]+", message = "El numero de DNI debe contener solo digitos")
     private String dni;
 
-    @NotBlank(message = "La fecha de registro no puede estar vacia")
-    private LocalDate registerDate;
 
     private int phone;
 
-    @Email
+    @Size(max = 100, message = "El correo electrónico no puede exceder los 100 caracteres")
+    @Email(message = "Debe ser una dirección de correo electrónico con formato correcto")
     private String email;
+
+    @NotBlank(message = "La contraseña no puede ir vacia")
+    @Size(min = 8, max = 15, message = "La contraseña debe tener entre 6 y 12 caracteres")
+    private String password;
+
     private String address;
 
 }
