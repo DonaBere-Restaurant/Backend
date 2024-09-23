@@ -14,4 +14,5 @@ public interface CustomerService {
     public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO);
     public CustomerResponseDTO updateCustomer(int id, CustomerRequestDTO customerRequestDTO);
     public void  deleteCustomer(int id);
+    public boolean authenticateUser(String email, String password);
 }
