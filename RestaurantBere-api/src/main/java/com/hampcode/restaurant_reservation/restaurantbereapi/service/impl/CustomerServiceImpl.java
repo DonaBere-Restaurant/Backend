@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -63,5 +64,14 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public void deleteCustomer(int id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean authenticateUser(String email, String password) {
+        Optional<Customer> userOptional = customerRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            Customer user = userOptional.get();
+            return user.getPassword().equals(password);
+        } return false;
     }
 }
