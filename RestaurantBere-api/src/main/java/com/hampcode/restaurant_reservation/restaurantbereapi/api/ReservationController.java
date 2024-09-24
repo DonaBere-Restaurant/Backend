@@ -10,12 +10,10 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableSer
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
 import jakarta.persistence.PersistenceUnit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -28,34 +26,87 @@ public class ReservationController {
     ReservationService reservationService;
     @Autowired
     ResTableService resTableService;
+    @Autowired
     ReservationMapper mapper;
+    @Autowired
     ResTableMapper resTableMapper;
 
-    @PutMapping("/mesas")
-    public ResponseEntity<String> reservation(@RequestBody ReservationTablesRequestDTO reservationTablesRequestDTO) {
-        Reservation reservation = mapper.convertToEntity(reservationTablesRequestDTO);
-        List<ReservationTable> mesas = reservation.getReservationTables();
+    @PostMapping("/mesas")
+    public ResponseEntity<?> reservation(@RequestBody ReservationTablesRequestDTO reservationTablesRequestDTO) {
+        // Obtener las mesas de la solicitud
+        List<ReservationTable> mesas = mapper.convertToEntity(reservationTablesRequestDTO).getReservationTables();
+
+        // Validar que las mesas no sean nulas ni vacías
         if (mesas == null || mesas.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("No se han proporcionado mesas."); // Devuelve respuesta y termina el método
         }
-        for (ReservationTable mesa : mesas) {  //Valido antes para asegurarme de que ninguna mesa seleccionada este ocupada.
-            if(mesa.getResTable().getStatus()==1)
-            {
-                throw new RuntimeException("Error una mesa que has seleccionado esta ocupada");
+
+        // Validar las mesas antes de crear la reserva
+        for (ReservationTable mesa : mesas) {
+            ResTableResponseDTO existingTableDto = resTableService.getResTableById(mesa.getResTable().getId());
+
+            // Verificar si la mesa existe
+            if (existingTableDto == null) {
+                // Si la mesa no existe, devolver un error
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Mesa con ID " + mesa.getResTable().getId() + " no existe."); // Devuelve respuesta y termina el método
+            }
+
+            ResTable existingTable = resTableMapper.convertToEntity(existingTableDto);
+
+            // Verificar si la mesa está ocupada
+            if (existingTable.getStatus() == 1) {
+                // Si la mesa está ocupada, devolver un error
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Error: una mesa que has seleccionado está ocupada."); // Devuelve respuesta y termina el método
             }
         }
+
+        // Crear una reserva vacía solo si todas las mesas están disponibles
+        ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO(); // Inicializar correctamente
+
+        // **Mover la creación de la reserva aquí** para que solo se ejecute después de las validaciones
+        ReservationResponseDTO savedReservation = null;
+        try {
+            savedReservation = reservationService.createReservation(reservationRequestDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al crear la reserva: " + e.getMessage());
+        }
+
+        Reservation reservation = mapper.convertToEntity(savedReservation); // Convertir solo después de que se haya creado la reserva
+
+        // Asociar las mesas a la reserva
+        for (ReservationTable mesa : mesas) {
+            mesa.setReservation(reservation); // Establecer la relación con la reserva
+        }
+
+        // Actualizar el estado de las mesas seleccionadas
         List<ResTableRequestDTO> updatedTables = new ArrayList<>();
-        for (ReservationTable mesa : mesas)
-        {
-            ResTable m1= mesa.getResTable();
-            m1.setStatus(1);
-            ResTableRequestDTO requestDTO=resTableMapper.converToDTO(m1);
+        for (ReservationTable mesa : mesas) {
+            ResTable m1 = mesa.getResTable();
+            m1.setStatus(1); // Marcar mesa como ocupada
+            ResTableRequestDTO requestDTO = resTableMapper.converToDTO(m1);
             updatedTables.add(requestDTO);
         }
-        resTableService.updateResTables(updatedTables);
-        reservationService.addTables(reservationTablesRequestDTO);
-        return ResponseEntity.ok("Mesa(s) agregada(s) correctamente");
+
+        // Intentar actualizar las mesas
+        try {
+            resTableService.updateResTables(updatedTables);
+        } catch (Exception e) {
+            // Manejar el caso en el que hubo un error al actualizar las mesas
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Error al actualizar mesas: " + e.getMessage()); // Devuelve respuesta y termina el método
+        }
+
+        // Agregar las mesas a la reserva
+        reservationService.addTablesToReservation(reservation.getId(), mesas); // Aquí se guarda la reserva
+
+        // Retornar la respuesta
+        ReservationResponseDTO responseDTO = mapper.convertToDTO(reservation);
+        return ResponseEntity.ok(responseDTO); // Devuelve la respuesta final
     }
+
     @PutMapping("/mesas/menu")
     public ResponseEntity<String> reservationMenu(@RequestBody ReservationDishesRequestDTO reservationDishesRequestDTO) {
         double totalpagar=0;
@@ -93,6 +144,13 @@ public class ReservationController {
     }
     @PutMapping("/mesas/menu/datos")
     public ReservationResponseDTO createreservation(@RequestBody ReservationRequestDTO reservationRequestDTO) {
+
         return reservationService.createReservation(reservationRequestDTO);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReservationResponseDTO>> getReservations() {
+        List<ReservationResponseDTO> reservations =reservationService.getAllReservations();
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 }

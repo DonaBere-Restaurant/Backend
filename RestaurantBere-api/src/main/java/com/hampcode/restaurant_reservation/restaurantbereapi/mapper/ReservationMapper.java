@@ -21,6 +21,9 @@ public class ReservationMapper {
     public Reservation convertToEntity(ReservationRequestDTO reservationRequestDTO) {
         return modelMapper.map(reservationRequestDTO, Reservation.class);
     }
+    public Reservation convertToEntity(ReservationResponseDTO reservationRequestDTO) {
+        return modelMapper.map(reservationRequestDTO, Reservation.class);
+    }
     public Reservation convertToEntity(ReservationTablesRequestDTO reservationRequestTablesDTO){
         return modelMapper.map(reservationRequestTablesDTO, Reservation.class);
     }

@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationTablesRequestDTO {
+
     @NotNull(message = "El Nro(id) de mesa no puede estar vacio")
-    private List<ReservationTable> resTable;
+    private List<ResTable> resTables;
 }

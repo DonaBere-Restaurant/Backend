@@ -19,6 +19,9 @@ public class ResTableMapper {
     public ResTable convertToEntity(ResTableRequestDTO resTableRequestDTO) {
         return modelMapper.map(resTableRequestDTO, ResTable.class);
     }
+    public ResTable convertToEntity(ResTableResponseDTO resTableResponseDTO) {
+        return modelMapper.map(resTableResponseDTO, ResTable.class);
+    }
 
     public ResTableResponseDTO convertToDTO(ResTable resTable) {
         return modelMapper.map(resTable, ResTableResponseDTO.class);

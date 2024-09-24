@@ -22,23 +22,23 @@ public class Reservation {
     @Column(name = "res_id_in")
     private int id;
 
-    @Column(name = "res_date_dt", nullable = false)
+    @Column(name = "res_date_dt", nullable = true)
     private LocalDate date;
 
     @Column(name = "res_ges_num_in", nullable = true)
     private int guestNumber;
 
-    @Column(name = "res_start_time_tm",nullable = false)
+    @Column(name = "res_start_time_tm",nullable = true)
     private LocalTime startTime;
 
-    @Column(name = "res_end_time_tm", nullable = false)
+    @Column(name = "res_end_time_tm", nullable = true)
     private LocalTime endTime;
 
-    @Column(name = "res_priceTot_do", nullable = false)
+    @Column(name = "res_priceTot_do", nullable = true)
     private double priceTotal;
 
     @ManyToOne
-    @JoinColumn(name = "customer_cus_id_in", nullable = false)
+    @JoinColumn(name = "customer_cus_id_in", nullable = true)
     private Customer customer;
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)

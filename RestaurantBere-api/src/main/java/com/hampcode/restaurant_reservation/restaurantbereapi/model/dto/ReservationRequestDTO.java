@@ -16,15 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationRequestDTO {
-
-    @NotBlank(message = "La fecha de la reserva no puede estar vacia")
-    @Future(message = "La fecha debe ser una fecha futura")
+    @NotBlank(message = "El id de la reserva no debe estar vacio")
+    private int id;
+    //@NotBlank(message = "La fecha de la reserva no puede estar vacia")
+    //@Future(message = "La fecha debe ser una fecha futura")
     private LocalDate date;
 
-    @NotNull(message = "El Id del cliente no puede estar vacio")
+    //@NotNull(message = "El Id del cliente no puede estar vacio")
     private Customer customer;
 
-    @NotBlank(message = "La hora de inicio de la reserva no puede estar vacía")
+    //@NotBlank(message = "La hora de inicio de la reserva no puede estar vacía")
     private LocalTime startTime;
 
     private int guestNumber;
