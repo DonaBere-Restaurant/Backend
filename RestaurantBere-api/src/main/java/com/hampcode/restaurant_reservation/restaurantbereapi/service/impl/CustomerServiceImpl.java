@@ -52,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponseDTO updateCustomer(int id, CustomerRequestDTO customerRequestDTO) {
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado con el numero:"+id));
         if(customerRequestDTO.getDni() != null)customer.setDni(customerRequestDTO.getDni());
-        if(customerRequestDTO.getPhone() != 0)customer.setPhone(customerRequestDTO.getPhone());
+        if(customerRequestDTO.getPhone() != null)customer.setPhone(customerRequestDTO.getPhone());
         if(customerRequestDTO.getEmail() != null)customer.setEmail(customerRequestDTO.getEmail());
         if(customerRequestDTO.getAddress() != null)customer.setAddress(customerRequestDTO.getAddress());
 

@@ -27,7 +27,7 @@ public class Customer {
     private LocalDate registerDate;
 
     @Column(name = "cus_pho_in")
-    private int phone;
+    private String phone;
 
     @Column(name = "cus_mail_vc", nullable = false)
     private String email;
