@@ -20,7 +20,7 @@ public class CustomerRequestDTO {
     private String dni;
 
 
-    private int phone;
+    private String phone;
 
     @Size(max = 100, message = "El correo electrónico no puede exceder los 100 caracteres")
     @Email(message = "Debe ser una dirección de correo electrónico con formato correcto")

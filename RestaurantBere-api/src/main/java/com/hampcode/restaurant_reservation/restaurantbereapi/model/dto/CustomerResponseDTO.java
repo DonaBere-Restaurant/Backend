@@ -13,7 +13,7 @@ public class CustomerResponseDTO {
     private int id;
     private String dni;
     private LocalDate registerDate;
-    private int phone;
+    private String phone;
     private String email;
     private String password;
     private String address;
