@@ -4,6 +4,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.Reservati
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,9 @@ public interface ReservationService {
     public List<ReservationResponseDTO> getAllReservations();
     public ReservationResponseDTO getReservationById(int id);
     public ReservationResponseDTO createReservation(ReservationRequestDTO reservationRequestDTO);
-    public ReservationResponseDTO addTablesToReservation(int reservationId, List<ReservationTable> reservationTables);
+    public ReservationResponseDTO addTablesToReservation(ReservationTablesRequestDTO reservationTablesRequestDTO);
     public ReservationResponseDTO addDishes(ReservationDishesRequestDTO reservationRequestDishesDTO);
     public ReservationResponseDTO updateReservation(int id, ReservationRequestDTO reservationRequestDTO);
     public void deleteReservation(int id);
+    public Reservation findReservationById(int id);
 }

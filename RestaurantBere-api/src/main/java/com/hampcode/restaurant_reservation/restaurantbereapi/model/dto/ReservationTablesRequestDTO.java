@@ -12,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationTablesRequestDTO {
-
+    @NotNull
+    private int id;
     @NotNull(message = "El Nro(id) de mesa no puede estar vacio")
     private List<ResTable> resTables;
 }

@@ -26,12 +26,17 @@ public class ResTableMapper {
     public ResTableResponseDTO convertToDTO(ResTable resTable) {
         return modelMapper.map(resTable, ResTableResponseDTO.class);
     }
-    public ResTableRequestDTO converToDTO(ResTable resTable) {
+    public ResTableRequestDTO convertTorequestDTO(ResTable resTable) {
         return modelMapper.map(resTable, ResTableRequestDTO.class);
     }
     public List<ResTableResponseDTO> convertToListDTO(List<ResTable> resTables) {
         return resTables.stream()
                 .map(this::convertToDTO)
+                .toList();
+    }
+    public List<ResTableRequestDTO> convertToListrequestDTO(List<ResTable> resTables) {
+        return resTables.stream()
+                .map(this::convertTorequestDTO)
                 .toList();
     }
 }

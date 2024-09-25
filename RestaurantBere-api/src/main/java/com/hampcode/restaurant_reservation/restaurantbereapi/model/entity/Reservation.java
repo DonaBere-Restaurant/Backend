@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Reservation {
     @Column(name = "res_ges_num_in", nullable = true)
     private int guestNumber;
 
+    //Formato 24 horas
     @Column(name = "res_start_time_tm",nullable = true)
     private LocalTime startTime;
 
@@ -41,8 +43,10 @@ public class Reservation {
     @JoinColumn(name = "customer_cus_id_in", nullable = true)
     private Customer customer;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
     private List<ReservationTable> reservationTables;
-    @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Order> orderDishes;
 }

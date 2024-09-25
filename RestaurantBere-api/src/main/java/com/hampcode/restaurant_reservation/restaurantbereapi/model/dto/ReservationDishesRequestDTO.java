@@ -1,6 +1,7 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReservationDishesRequestDTO {
     @NotBlank(message = "El id de la reserva no debe ser nulo")
-    private int id;
+    private Integer id;
     //@NotNull(message = "El Id del plato no puede estar vacio")
-    private List<Order> orderDishes;
+    private List<OrderDishDTO> orderDishes;
 }

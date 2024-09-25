@@ -1,5 +1,7 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -7,15 +9,16 @@ import lombok.Data;
 @Entity
 public class ReservationTable {
     @EmbeddedId
+    @JsonIgnore
     private ReservationTableId id;
-
     @ManyToOne
-    @MapsId("res_id_in")
+    @MapsId("reservationId")
+    @JsonIgnore
     @JoinColumn(name = "res_id_in")
     private Reservation reservation;
 
     @ManyToOne
-    @MapsId("tab_id_in")
+    @MapsId("tableId")
     @JoinColumn(name = "tab_id_in")
     private ResTable resTable;
 }

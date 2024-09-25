@@ -22,11 +22,15 @@ public class ReservationRequestDTO {
     //@Future(message = "La fecha debe ser una fecha futura")
     private LocalDate date;
 
-    //@NotNull(message = "El Id del cliente no puede estar vacio")
+    @NotNull(message = "El Id del cliente no puede estar vacio")
     private Customer customer;
 
     //@NotBlank(message = "La hora de inicio de la reserva no puede estar vacía")
     private LocalTime startTime;
 
     private int guestNumber;
+    private double priceTotal;
+    private List<OrderDishDTO> orderDishes;
+
+    private List<ReservationTable> tables;
 }

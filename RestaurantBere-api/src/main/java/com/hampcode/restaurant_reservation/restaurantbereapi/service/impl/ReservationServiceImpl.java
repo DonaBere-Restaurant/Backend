@@ -2,31 +2,39 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.exception.ResourceNotFoundException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationDishesRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ResTableRepository;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ReservationRespository;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ReservationTableRepository;
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationTablesMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private final ReservationRespository reservationRespository;
+
     @Autowired
     private final ReservationMapper reservationMapper;
-    private final ReservationTableRepository reservationTableRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
+    private DishRepository dishRepository;
+    @Autowired
+    private ResTableService resTableService;
+    @Autowired
+    private ReservationTablesMapper reservationTablesMapper;
 
 
     @Transactional(readOnly = true)
@@ -47,26 +55,11 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRespository.save(reservation);
         return reservationMapper.convertToDTO(reservation);
     }
-
-    public ReservationResponseDTO addTablesToReservation(int reservationId, List<ReservationTable> reservationTables) {
-        // Buscar la reserva existente por ID
-        Reservation reservation = reservationRespository.findById(reservationId)
-                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
-
-        // Validar que las mesas no estén ocupadas antes de agregarlas
-        for (ReservationTable reservationTable : reservationTables) {
-            // Comprobar si la mesa está ocupada
-            if (reservationTable.getResTable().getStatus() == 1) {
-                throw new RuntimeException("Error: una mesa que has seleccionado está ocupada.");
-            }
-            reservationTable.setReservation(reservation); // Asociar la mesa a la reserva
-        }
-
-        // Si todas las mesas están disponibles, guardar en la base de datos
-        reservationTableRepository.saveAll(reservationTables);
-
-        // Retornar la reserva actualizada como DTO
-        return reservationMapper.convertToDTO(reservation);
+    @Override
+    public ReservationResponseDTO addTablesToReservation(ReservationTablesRequestDTO reservationTablesRequestDTO) {
+         Reservation reservation = reservationMapper.convertToEntity(reservationTablesRequestDTO);
+         reservationRespository.save(reservation);
+         return reservationMapper.convertToDTO(reservation);
     }
     @Override
     public ReservationResponseDTO addDishes(ReservationDishesRequestDTO reservationRequestDishesDTO) {
@@ -74,18 +67,94 @@ public class ReservationServiceImpl implements ReservationService {
        reservationRespository.save(reservation);
        return reservationMapper.convertToDTO(reservation);
     }
+    @Override
+    public Reservation findReservationById(int id) {
+    return reservationRespository.findById(id).orElse(null);
+    }
 
     @Override
     public ReservationResponseDTO updateReservation(int id, ReservationRequestDTO reservationRequestDTO) {
-        Reservation reservation = reservationRespository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cuenta no encontrada con el numero:"+id));
-        if(reservationRequestDTO.getDate() != null)reservation.setDate(reservationRequestDTO.getDate());
-        if(reservationRequestDTO.getGuestNumber()!=0)reservation.setGuestNumber(reservationRequestDTO.getGuestNumber());
-        if(reservationRequestDTO.getStartTime()!=null)reservation.setStartTime(reservationRequestDTO.getStartTime());
-        reservation  = reservationRespository.save(reservation);
+        Reservation reservation = reservationRespository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con el número: " + id));
 
+        // Actualiza los campos según corresponda
+        if (reservationRequestDTO.getDate() != null) {
+            reservation.setDate(reservationRequestDTO.getDate());
+        }
+        if (reservationRequestDTO.getGuestNumber() != 0) {
+            reservation.setGuestNumber(reservationRequestDTO.getGuestNumber());
+        }
+        if (reservationRequestDTO.getStartTime() != null) {
+            reservation.setStartTime(reservationRequestDTO.getStartTime());
+        }
+        if (reservationRequestDTO.getCustomer() != null && reservationRequestDTO.getCustomer().getId() != 0) {
+            Customer customer = customerRepository.findById(reservationRequestDTO.getCustomer().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con el ID: " + reservationRequestDTO.getCustomer().getId()));
+            reservation.setCustomer(customer);
+        }
+        if (reservationRequestDTO.getPriceTotal() != 0) {
+            reservation.setPriceTotal(reservationRequestDTO.getPriceTotal());
+        }
+
+        if (reservationRequestDTO.getOrderDishes() != null) {
+            // Crear una lista de órdenes nuevas
+            List<Order> updatedOrders = new ArrayList<>();
+
+            for (OrderDishDTO orderDishDTO : reservationRequestDTO.getOrderDishes()) {
+                // Obtener el plato a partir del ID
+                Dish dish = dishRepository.findById(orderDishDTO.getDishId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado con ID: " + orderDishDTO.getDishId()));
+
+                // Crear el objeto Order y asignar el Dish y Reservation
+                Order newOrder = new Order();
+                OrderDishId orderDishId = new OrderDishId(orderDishDTO.getDishId(), reservation.getId());
+                newOrder.setId(orderDishId);
+                newOrder.setDish(dish);
+                newOrder.setReservation(reservation);
+
+                updatedOrders.add(newOrder); // Añadir a la lista actualizada
+            }
+
+            // Reemplazar la lista de órdenes en la reserva
+            reservation.setOrderDishes(updatedOrders);
+        }
+        //añadir mesas
+        if (reservationRequestDTO.getTables() != null) {
+            Reservation finalReservation = reservation;
+            List<ReservationTable> updatedTables = reservationRequestDTO.getTables().stream()
+                    .map(reservationTableDTO -> {
+                        // Buscar la mesa existente en la base de datos por su ID
+                        ResTable table = resTableService.findResTableById(reservationTableDTO.getResTable().getId());
+                        if (table == null) {
+                            throw new ResourceNotFoundException("Mesa no encontrada con ID: " + reservationTableDTO.getId());
+                        }
+
+                        // Crear la entidad ReservationTable
+                        ReservationTable reservationTable = new ReservationTable();
+
+                        // Crear el ID compuesto
+                        ReservationTableId reservationTableId = new ReservationTableId();
+                        reservationTableId.setReservationId(finalReservation.getId());  // ID de la reserva
+                        reservationTableId.setTableId(table.getId());  // ID de la mesa
+
+                        // Asignar el ID compuesto y las relaciones
+                        reservationTable.setId(reservationTableId);
+                        reservationTable.setResTable(table);
+                        reservationTable.setReservation(finalReservation);
+
+                        return reservationTable;
+                    })
+                    .collect(Collectors.toList());
+
+            // Actualizar la reserva con las nuevas mesas
+            reservation.setReservationTables(updatedTables);
+        }
+
+
+        // Guardar la reserva actualizada
+        reservation = reservationRespository.save(reservation);
         return reservationMapper.convertToDTO(reservation);
     }
-
 
 
     @Override
