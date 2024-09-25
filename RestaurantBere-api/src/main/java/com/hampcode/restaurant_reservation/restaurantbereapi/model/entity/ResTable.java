@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,4 +24,7 @@ public class ResTable {
 
     @Column(name = "tab_status_in", nullable = false)
     private int status;
+
+    @Column(name="tab_pri_do")
+    private double price;
 }

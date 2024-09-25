@@ -19,14 +19,24 @@ public class ResTableMapper {
     public ResTable convertToEntity(ResTableRequestDTO resTableRequestDTO) {
         return modelMapper.map(resTableRequestDTO, ResTable.class);
     }
+    public ResTable convertToEntity(ResTableResponseDTO resTableResponseDTO) {
+        return modelMapper.map(resTableResponseDTO, ResTable.class);
+    }
 
     public ResTableResponseDTO convertToDTO(ResTable resTable) {
         return modelMapper.map(resTable, ResTableResponseDTO.class);
     }
-
+    public ResTableRequestDTO convertTorequestDTO(ResTable resTable) {
+        return modelMapper.map(resTable, ResTableRequestDTO.class);
+    }
     public List<ResTableResponseDTO> convertToListDTO(List<ResTable> resTables) {
         return resTables.stream()
                 .map(this::convertToDTO)
+                .toList();
+    }
+    public List<ResTableRequestDTO> convertToListrequestDTO(List<ResTable> resTables) {
+        return resTables.stream()
+                .map(this::convertTorequestDTO)
                 .toList();
     }
 }

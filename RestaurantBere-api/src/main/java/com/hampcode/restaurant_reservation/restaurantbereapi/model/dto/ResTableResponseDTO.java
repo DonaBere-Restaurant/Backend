@@ -11,4 +11,5 @@ public class ResTableResponseDTO {
     private int id;
     private int capacity;
     private int status;
+   private double price;
 }

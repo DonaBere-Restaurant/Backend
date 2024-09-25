@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,26 +23,30 @@ public class Reservation {
     @Column(name = "res_id_in")
     private int id;
 
-    @Column(name = "res_date_dt", nullable = false)
+    @Column(name = "res_date_dt", nullable = true)
     private LocalDate date;
 
-    @Column(name = "res_ges_num_in", nullable = false)
+    @Column(name = "res_ges_num_in", nullable = true)
     private int guestNumber;
 
-    @Column(name = "res_start_time_tm",nullable = false)
+    //Formato 24 horas
+    @Column(name = "res_start_time_tm",nullable = true)
     private LocalTime startTime;
 
-    @Column(name = "res_end_time_tm", nullable = false)
+    @Column(name = "res_end_time_tm", nullable = true)
     private LocalTime endTime;
 
-    @Column(name = "res_priceTot_do", nullable = false)
+    @Column(name = "res_priceTot_do", nullable = true)
     private double priceTotal;
 
     @ManyToOne
-    @JoinColumn(name = "customer_cus_id_in", nullable = false)
+    @JoinColumn(name = "customer_cus_id_in", nullable = true)
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "table_tab_id_in", nullable = false)
-    private ResTable resTable;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
+    private List<ReservationTable> reservationTables;
+
+    @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Order> orderDishes;
 }

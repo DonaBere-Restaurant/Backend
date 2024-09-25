@@ -18,6 +18,9 @@ public class DishMapper {
     public Dish convertToEntity(DishRequesDTO dishRequesDTO){
         return modelMapper.map(dishRequesDTO, Dish.class);
     }
+    public Dish convertToEntity(DishResponseDTO dishResponseDTO){
+        return modelMapper.map(dishResponseDTO, Dish.class);
+    }
 
     public DishResponseDTO convertToDTO(Dish dish){
         return modelMapper.map(dish, DishResponseDTO.class);

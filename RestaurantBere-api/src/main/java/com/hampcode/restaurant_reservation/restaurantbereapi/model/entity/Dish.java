@@ -19,10 +19,10 @@ public class Dish {
     @Column(name = "dis_id_in")
     private int id;
 
-    @Column(name = "dis_tit_vc", nullable = false)
+    @Column(name = "dis_tit_vc", nullable = true)
     private String title;
 
-    @Column(name = "dis_des_vc", nullable = false)
+    @Column(name = "dis_des_vc", nullable = true)
     private String description;
 
     @Column(name = "dis_pri_do", nullable = false)

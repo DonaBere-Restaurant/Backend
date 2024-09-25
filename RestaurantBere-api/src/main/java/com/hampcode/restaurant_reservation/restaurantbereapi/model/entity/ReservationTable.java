@@ -5,22 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "Order_reservation")
-public class Order {
+@Entity
+public class ReservationTable {
     @EmbeddedId
     @JsonIgnore
-    private OrderDishId id;
-
-    @ManyToOne
-    @MapsId("dishId")
-    @JoinColumn(name = "dis_id_in")
-    private Dish dish;
-
+    private ReservationTableId id;
     @ManyToOne
     @MapsId("reservationId")
-    @JoinColumn(name = "res_id_in")
     @JsonIgnore
+    @JoinColumn(name = "res_id_in")
     private Reservation reservation;
+
+    @ManyToOne
+    @MapsId("tableId")
+    @JoinColumn(name = "tab_id_in")
+    private ResTable resTable;
 }
