@@ -16,9 +16,9 @@ public interface ReservationService {
     public List<ReservationResponseDTO> getAllReservations();
     public ReservationResponseDTO getReservationById(int id);
     public ReservationResponseDTO createReservation(ReservationRequestDTO reservationRequestDTO);
-    public ReservationResponseDTO addTablesToReservation(ReservationTablesRequestDTO reservationTablesRequestDTO);
-    public ReservationResponseDTO addDishes(ReservationDishesRequestDTO reservationRequestDishesDTO);
-    public ReservationResponseDTO updateReservation(int id, ReservationRequestDTO reservationRequestDTO);
+   public ReservationResponseDTO updateReservation(int id, ReservationRequestDTO reservationRequestDTO);
     public void deleteReservation(int id);
     public Reservation findReservationById(int id);
+    public void freeOccupiedTables(int reservationId);
+    public void checkAndFreeTables();
 }

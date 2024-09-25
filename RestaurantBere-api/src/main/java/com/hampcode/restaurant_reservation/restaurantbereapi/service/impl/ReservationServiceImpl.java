@@ -11,9 +11,13 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.Reservation
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +39,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ResTableService resTableService;
     @Autowired
     private ReservationTablesMapper reservationTablesMapper;
-
+    @Autowired
+    private ResTableRepository resTableRepository;
 
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
@@ -51,21 +56,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponseDTO createReservation(ReservationRequestDTO reservationRequestDTO) {
+        LocalTime startTime = reservationRequestDTO.getStartTime();
+        //LocalTime endTime = startTime.plusHours(2);
+        LocalTime endTime = startTime.plusHours(2);
         Reservation reservation = reservationMapper.convertToEntity(reservationRequestDTO);
+        reservation.setEndTime(endTime);
         reservationRespository.save(reservation);
         return reservationMapper.convertToDTO(reservation);
-    }
-    @Override
-    public ReservationResponseDTO addTablesToReservation(ReservationTablesRequestDTO reservationTablesRequestDTO) {
-         Reservation reservation = reservationMapper.convertToEntity(reservationTablesRequestDTO);
-         reservationRespository.save(reservation);
-         return reservationMapper.convertToDTO(reservation);
-    }
-    @Override
-    public ReservationResponseDTO addDishes(ReservationDishesRequestDTO reservationRequestDishesDTO) {
-       Reservation reservation = reservationMapper.convertToEntity(reservationRequestDishesDTO);
-       reservationRespository.save(reservation);
-       return reservationMapper.convertToDTO(reservation);
     }
     @Override
     public Reservation findReservationById(int id) {
@@ -156,6 +153,37 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationMapper.convertToDTO(reservation);
     }
 
+    @Scheduled(fixedRate = 60000) // Por ejemplo, cada 60 segundos
+    public void scheduledFreeTables() {
+        System.out.println("Ejecutando la tarea programada para liberar mesas...");
+        checkAndFreeTables();
+    }
+    @Override
+    public void freeOccupiedTables(int reservationId) {
+        Reservation reservation = reservationRespository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+
+        LocalTime endTime = reservation.getEndTime();
+        LocalTime currentTime = LocalTime.now(); // Obtiene la hora actual
+
+        if (currentTime.isAfter(endTime)) {
+            for (ReservationTable reservationTable : reservation.getReservationTables()) {
+                ResTable table = reservationTable.getResTable();
+                table.setStatus(0); // Cambia el estado a "libre"
+                resTableRepository.save(table); // Guarda el estado actualizado de la mesa
+            }
+        }
+    }
+
+    @Override
+    public void checkAndFreeTables() {
+        LocalTime currentDateTime = LocalTime.now();
+        List<Reservation> reservations = reservationRespository.findAllByEndTimeBefore(currentDateTime);
+
+        for (Reservation reservation : reservations) {
+            freeOccupiedTables(reservation.getId());
+        }
+    }
 
     @Override
     public void deleteReservation(int id) {

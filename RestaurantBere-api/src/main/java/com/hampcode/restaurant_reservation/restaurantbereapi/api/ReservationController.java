@@ -44,7 +44,8 @@ public class ReservationController {
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
     {
-       return  reservationService.createReservation(reservationRequestDTO);
+
+        return  reservationService.createReservation(reservationRequestDTO);
     }
     //eliminar despues
     @PostMapping("/dia/mesasdepuration")
@@ -87,8 +88,10 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Reserva no válida.");
         }
 
+
         // Obtener las mesas de la solicitud
         List<ReservationTable> mesas = new ArrayList<>();
+
 
         for (ResTable resTable : reservationTablesRequestDTO.getResTables()) {
             // Buscar la mesa existente en la base de datos por su ID
@@ -98,6 +101,12 @@ public class ReservationController {
             if (existingTable == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Mesa con ID " + resTable.getId() + " no existe.");
+            }
+
+            // Verificar si la mesa está ocupada
+            if (existingTable.getStatus() == 1) { // Si el estado es ocupado
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("La mesa con ID " + existingTable.getId() + " ya está ocupada.");
             }
 
             // Crear la entidad ReservationTable
@@ -122,6 +131,11 @@ public class ReservationController {
 
         // Actualizar la reserva con las nuevas mesas
         reservation.setReservationTables(mesas);
+
+        // Cambiar el estado de las mesas seleccionadas a ocupado (1)
+        for (ResTable table : mesas.stream().map(ReservationTable::getResTable).collect(Collectors.toList())) {
+            table.setStatus(1); // Cambia el estado de la mesa a ocupado
+        }
 
         // Intentar actualizar las mesas
         List<ResTable> tablesToUpdate = mesas.stream()
@@ -239,5 +253,10 @@ public class ReservationController {
     public ResponseEntity<List<ReservationResponseDTO>> getReservations() {
         List<ReservationResponseDTO> reservations =reservationService.getAllReservations();
         return new ResponseEntity<>(reservations, HttpStatus.OK);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity <ReservationResponseDTO> getReservationbyId(@PathVariable int id)
+    {
+        return new ResponseEntity<>(reservationService.getReservationById(id), HttpStatus.OK);
     }
 }
