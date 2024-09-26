@@ -19,6 +19,8 @@ public class CustomerRequestDTO {
     @Pattern(regexp = "[0-9]+", message = "El numero de DNI debe contener solo digitos")
     private String dni;
 
+    @NotBlank(message = "El nombre no puede estar vacio")
+    private String name;
 
     private String phone;
 
