@@ -4,10 +4,8 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.CustomerService;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.DishService;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.ReservationConfirmationImpl;
 import jakarta.persistence.Column;
 import jakarta.persistence.PersistenceUnit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +38,10 @@ public class ReservationController {
     CustomerService customerService;
     @Autowired
     CustomerMapper customerMapper;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private ReservationConfirmationImpl reservationConfirmationImpl;
 
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
@@ -243,10 +245,18 @@ public class ReservationController {
 
 
         if (existingReservation == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Devolver error si la actualización falla
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
         ReservationResponseDTO responseDTO = mapper.convertToDTO(existingReservation);
+
+        try {
+            String[] bccRecipients = {"jaimepalominocuenca@gmail.com"};
+            reservationConfirmationImpl.sendReservationEmail(bccRecipients, responseDTO);
+        } catch (Exception e) {
+            System.err.println("Error al enviar el correo: " + e.getMessage());
+        }
+
         return ResponseEntity.ok(responseDTO);
     }
     @GetMapping

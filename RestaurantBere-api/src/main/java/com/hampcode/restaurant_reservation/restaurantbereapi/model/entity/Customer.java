@@ -20,6 +20,9 @@ public class Customer {
     @Column(name="cus_id_in")
     private int id;
 
+    @Column(name = "cus_name", nullable = false)
+    private String name;
+
     @Column(name = "cus_dni_vc", nullable = false)
     private String dni;
 
