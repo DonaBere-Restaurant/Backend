@@ -1,20 +1,28 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.PaypalService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @RestController
-@RequestMapping("/admin/payments")
+@RequestMapping("reservasion/dia/mesas/menu/datos")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
-
+    @Autowired
+    public ReservationService reservationService;
+    @Autowired
+    public ReservationMapper reservationMapper;
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
         String returnUrl = "http://localhost:8080/api/v1/admin/payments/payment";
@@ -56,33 +64,57 @@ public class PaypalController {
         }
     }
 
-  /*  @GetMapping("/pay-event/{eventId}")
-    public String handleEventPayment(@PathVariable int eventId) {
+@GetMapping("/pay-reservation/{reservationid}")
+    public String handleEventPayment(@PathVariable int reservationid) {
 
-        // Retrieve event by ID
-        Event event = eventServiceImpl.getEventById(eventId);
+        Reservation reservation = reservationService.findReservationById(reservationid);
 
-        String returnUrl = "http://localhost:8080/api/v1/admin/payments/payment";
+
+        if (reservation == null) {
+            return "Reservacion no existente";
+        }
+
+        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
 
-        if (event == null) {
-            return "Event not found.";
-        }
 
-        // Check if the event has a price
-        BigDecimal eventPrice = event.getCost();
+            double totalpagar = reservation.getPriceTotal();
 
-        if (eventPrice.compareTo(BigDecimal.ZERO) == 0) {
-            return "This event is free.";
-        }
-        double eventPriceDouble = eventPrice.doubleValue();
-        // Generate the PayPal order for the event price
+    try {
+        String approvalUrl = paypalService.createOrder(totalpagar, returnUrl, cancelUrl);
+
+        String token = approvalUrl;
+
+        // Almacenar el token en la reserva
+        reservation.setPaymentToken(token);
+
+        // Actualizar la reserva con el token de pago
+        reservationService.updateReservation(reservation.getId(), reservationMapper.convertToRequestDTO(reservation));
+
+        // Devolver la URL de aprobación proporcionada por PayPal directamente
+        return "https://www.sandbox.paypal.com/checkoutnow?token="+approvalUrl;
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "Error occurred during payment process.";
+    }
+    }
+
+    @GetMapping("/pay-reservation/success")
+    public String handlePaymentSuccess(@RequestParam("token") String token) {
         try {
-            String approvalUrl = paypalService.createOrder(eventPriceDouble, returnUrl, cancelUrl);
-            return "https://www.sandbox.paypal.com/checkoutnow?token=" + approvalUrl;
+            // Captura la orden usando el token de PayPal
+            HttpResponse<Order> response = paypalService.captureOrder(token);
+
+            if (response.statusCode() == 201) { // Código 201 indica que el pago fue capturado exitosamente
+                // Puedes marcar la reserva como pagada en tu base de datos
+                reservationService.updatePaymentStatus(token, true);
+                return "Pago completado con éxito.";
+            } else {
+                return "Error en la captura del pago.";
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error occurred during payment process.";
+            return "Error procesando el pago.";
         }
-    }*/
+    }
 }

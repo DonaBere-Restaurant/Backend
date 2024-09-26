@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface ReservationRespository extends JpaRepository<Reservation, Integer> {
     List<Reservation> findAllByEndTimeBefore(LocalTime endTime);
+    List<Reservation> findAllByCreatedTimeBetween(LocalDateTime startDateTime, LocalDateTime endDateTime);
+    Reservation findByPaymentToken(String token);
 }

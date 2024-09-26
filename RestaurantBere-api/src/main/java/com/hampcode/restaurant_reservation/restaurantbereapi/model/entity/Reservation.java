@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -49,4 +50,17 @@ public class Reservation {
 
     @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Order> orderDishes;
+
+    @Column(name = "res_sta_pay_bo", nullable = true)
+    private boolean paymentstatus = false;
+
+    @Column(name = "res_cre_dt", nullable = true)
+    private LocalDateTime createdTime;
+
+    @Column (name = "res_tok_vc")
+    private String paymentToken;
+
+    public boolean getPaymentstatus() {
+        return paymentstatus;
+    }
 }

@@ -21,4 +21,6 @@ public interface ReservationService {
     public Reservation findReservationById(int id);
     public void freeOccupiedTables(int reservationId);
     public void checkAndFreeTables();
+    public void checkPayment();
+    public void updatePaymentStatus(String token,boolean status);
 }
