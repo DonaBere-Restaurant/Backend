@@ -22,9 +22,7 @@ public class ReservationTablesMapper {
         ReservationTable reservationTable = new ReservationTable();
         ResTable resTable = new ResTable();
 
-        // Asignar el ID y otros campos desde el DTO a la entidad
         resTable.setId(tableDto.getId());
-        // Si tienes más campos en ResTableRequestDTO, asígnalos aquí.
         // resTable.setCapacity(tableDto.getCapacity());
         // resTable.setPrice(tableDto.getPrice());
         // resTable.setStatus(tableDto.getStatus());

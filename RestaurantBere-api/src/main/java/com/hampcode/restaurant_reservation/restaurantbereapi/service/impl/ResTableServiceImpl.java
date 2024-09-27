@@ -23,6 +23,14 @@ public class ResTableServiceImpl implements ResTableService {
     @Autowired
     private final ResTableMapper resTableMapper;
 
+    @Override
+    public ResTableResponseDTO updateResTable(int id, ResTableRequestDTO resTableRequestDTO) {
+        ResTable resTableactual = resTableRepository.findById(id).orElse(null);
+        if(resTableRequestDTO.getCapacity()>0)resTableactual.setCapacity(resTableRequestDTO.getCapacity());
+        if(resTableRequestDTO.getPrice()>0)resTableactual.setPrice(resTableRequestDTO.getPrice());
+        resTableactual=resTableRepository.save(resTableactual);
+        return resTableMapper.convertToDTO(resTableactual);
+    }
 
     @Transactional(readOnly = true)
     public List<ResTableResponseDTO> getAllResTables() {
@@ -34,13 +42,6 @@ public class ResTableServiceImpl implements ResTableService {
     public ResTableResponseDTO getResTableById(int id) {
         ResTable restable = resTableRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Mesa no encontrada con el número: " + id));
-
-        // Imprimir para depuración
-        System.out.println("Mesa recuperada: ID=" + restable.getId() +
-                ", Capacity=" + restable.getCapacity() +
-                ", Status=" + restable.getStatus() +
-                ", Price=" + restable.getPrice());
-
         return resTableMapper.convertToDTO(restable);
     }
     public ResTable getResTableId(int id) {

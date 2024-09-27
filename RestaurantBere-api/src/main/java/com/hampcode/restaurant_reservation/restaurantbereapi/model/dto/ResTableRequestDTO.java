@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResTableRequestDTO {
-
+    @JsonIgnore
     private int id;
     private int capacity;
     private double price;

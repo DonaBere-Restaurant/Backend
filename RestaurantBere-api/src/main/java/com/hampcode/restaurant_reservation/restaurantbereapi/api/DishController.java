@@ -11,19 +11,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dishes")
+@RequestMapping("")
 @AllArgsConstructor
 public class DishController {
 
     private DishServiceImpl dishServiceImpl;
 
-    @GetMapping
+    @GetMapping ("/dia/mesas/menu")
     public ResponseEntity<List<DishResponseDTO>> getAllDishes() {
         List<DishResponseDTO> dishes = dishServiceImpl.getAllDishes();
         return new ResponseEntity<>(dishes, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("admin/menu/{id}")
     public ResponseEntity<?> getDishById(@PathVariable int id) {
         DishResponseDTO dish = dishServiceImpl.getDishById(id);
 
@@ -34,7 +34,7 @@ public class DishController {
         }
     }
 
-    @PostMapping
+    @PostMapping("admin/menu")
     public ResponseEntity<String> createDish(@RequestBody DishRequesDTO dishRequesDTO){
 
         try{
@@ -48,14 +48,16 @@ public class DishController {
 
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("admin/menu/{id}")
     public ResponseEntity<DishResponseDTO> updateDish (@PathVariable int id, @RequestBody DishRequesDTO dishRequesDTO){
         DishResponseDTO dish = dishServiceImpl.getDishById(id);
+        dish=dishServiceImpl.updateDish(id, dishRequesDTO);
         return new ResponseEntity<>(dish, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteDish (@PathVariable int id) {
+    @DeleteMapping("admin/menu/{id}")
+    public  ResponseEntity<?> deleteDish (@PathVariable int id) {
         dishServiceImpl.deleteDish(id);
+        return new ResponseEntity<>("Plato eliminado",HttpStatus.OK);
     }
 }
