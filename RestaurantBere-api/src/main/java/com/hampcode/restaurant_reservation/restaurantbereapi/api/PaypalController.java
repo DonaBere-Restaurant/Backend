@@ -1,9 +1,12 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ReservationRespository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.PaypalService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.ReservationConfirmationImpl;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.Order;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,14 @@ public class PaypalController {
     public ReservationService reservationService;
     @Autowired
     public ReservationMapper reservationMapper;
+    public ReservationResponseDTO reservationResponseDTO;
+    @Autowired
+    private ReservationConfirmationImpl reservationConfirmationImpl;
+
+    String[] bccRecipients = {"jaimepalominocuenca@gmail.com"};
+    @Autowired
+    private ReservationRespository reservationRespository;
+
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
         String returnUrl = "http://localhost:8080/api/v1/admin/payments/payment";
@@ -101,20 +112,31 @@ public class PaypalController {
 
     @GetMapping("/pay-reservation/success")
     public String handlePaymentSuccess(@RequestParam("token") String token) {
+        boolean successPayment; //variable de control para enviar el correo si se completo el pago
+        Reservation reservation; //inicializacion de la variable
         try {
             // Captura la orden usando el token de PayPal
             HttpResponse<Order> response = paypalService.captureOrder(token);
 
             if (response.statusCode() == 201) { // Código 201 indica que el pago fue capturado exitosamente
-                // Puedes marcar la reserva como pagada en tu base de datos
+                // Marcar la reserva como pagada en la base de datos
                 reservationService.updatePaymentStatus(token, true);
-                return "Pago completado con éxito.";
+                successPayment = true;
             } else {
                 return "Error en la captura del pago.";
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return "Error procesando el pago.";
         }
+        if (successPayment) {
+            reservation = reservationRespository.findByPaymentToken(token); //encuentra la reserva por token
+            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation); //mapeo a DTO de la reservacion
+            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservationResponseDTO); //envia el correo
+            return "Pagado con éxito";
+        }
+
+        return "Pago completado con éxito.";
     }
 }

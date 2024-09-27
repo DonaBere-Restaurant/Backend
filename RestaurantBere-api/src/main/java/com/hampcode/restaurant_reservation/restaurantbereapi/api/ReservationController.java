@@ -39,10 +39,6 @@ public class ReservationController {
     CustomerService customerService;
     @Autowired
     CustomerMapper customerMapper;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private ReservationConfirmationImpl reservationConfirmationImpl;
 
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
@@ -202,36 +198,22 @@ public class ReservationController {
             return ResponseEntity.badRequest().body(null);  // Si no existe, devolver error
         }
 
-
         Customer customer = customerMapper.convertToEntity(customerService.getCustomerById(reservationRequestDTO.getCustomer().getId()));
         if (customer == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
-
         existingReservation.setCustomer(customer);
-
 
         if (reservationRequestDTO.getGuestNumber() != 0) {
             existingReservation.setGuestNumber(reservationRequestDTO.getGuestNumber());
         }
 
-
         existingReservation = mapper.convertToEntity(reservationService.updateReservation(existingReservation.getId(), mapper.convertToRequestDTO(existingReservation)));
 
-
-        if (existingReservation == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        if (existingReservation == null) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); }
 
         ReservationResponseDTO responseDTO = mapper.convertToDTO(existingReservation);
-
-        try {
-            String[] bccRecipients = {"jaimepalominocuenca@gmail.com"};
-            reservationConfirmationImpl.sendReservationEmail(bccRecipients, responseDTO);
-        } catch (Exception e) {
-            System.err.println("Error al enviar el correo: " + e.getMessage());
-        }
 
         return ResponseEntity.ok(responseDTO);
     }

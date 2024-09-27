@@ -19,7 +19,7 @@ public class EmailService {
     public String sendEmail(String to, String[] bcc, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("govench6@gmail.com");
+            message.setFrom("restaurantbere@gmail.com");
             message.setTo(to);
             message.setBcc(bcc);
             message.setSubject(subject);
