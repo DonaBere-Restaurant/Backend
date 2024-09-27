@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.exception.TableNotAvailableException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
@@ -47,31 +48,7 @@ public class ReservationController {
 
         return  reservationService.createReservation(reservationRequestDTO);
     }
-    //eliminar despues
-    @PostMapping("/dia/mesasdepuration")
-    public ResponseEntity<?> reservationdepuracion(@RequestBody ReservationTablesRequestDTO reservationTablesRequestDTO) {
-        System.out.println("Recibido: " + reservationTablesRequestDTO);
 
-        // Lista para almacenar las mesas encontradas
-        List<ResTable> mesasEncontradas = new ArrayList<>();
-
-        // Verifica que estás obteniendo las mesas correctas
-        for (ResTable resTable : reservationTablesRequestDTO.getResTables()) {
-            System.out.println("ID de mesa: " + resTable.getId());
-
-            // Obtiene la entidad directamente
-            ResTable existingTable = resTableService.getResTableId(resTable.getId());
-
-            // Verifica si la mesa existe
-
-            mesasEncontradas.add(existingTable); // Agrega la mesa recuperada a la lista
-
-        }
-
-        // Devuelve la lista de mesas encontradas en la respuesta
-        return ResponseEntity.ok(mesasEncontradas);
-    }
-    //
     @PostMapping("/dia/mesas")
     public ResponseEntity<?> reservation(@RequestBody ReservationTablesRequestDTO reservationTablesRequestDTO) {
         // Obtener la reserva
@@ -104,11 +81,10 @@ public class ReservationController {
             }
 
             // Verificar si la mesa está ocupada
-            if (existingTable.getStatus() == 1) { // Si el estado es ocupado
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("La mesa con ID " + existingTable.getId() + " ya está ocupada.");
+            if (!reservationService.isTableAvailable(resTable.getId(), reservation.getDate(), reservation.getStartTime(), reservation.getEndTime())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mesa ocupada.");
+                //throw new TableNotAvailableException("La mesa " + resTable.getId() + " no está disponible en el horario solicitado.");
             }
-
             // Crear la entidad ReservationTable
             ReservationTable reservationTable = new ReservationTable();
             ReservationTableId reservationTableId = new ReservationTableId();
@@ -259,4 +235,5 @@ public class ReservationController {
     {
         return new ResponseEntity<>(reservationService.getReservationById(id), HttpStatus.OK);
     }
+
 }

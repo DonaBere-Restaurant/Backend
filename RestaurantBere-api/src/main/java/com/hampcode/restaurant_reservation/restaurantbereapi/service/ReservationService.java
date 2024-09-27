@@ -8,6 +8,8 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reserv
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -23,4 +25,5 @@ public interface ReservationService {
     public void checkAndFreeTables();
     public void checkPayment();
     public void updatePaymentStatus(String token,boolean status);
+    public boolean isTableAvailable(int tableId, LocalDate startDate, LocalTime startTime, LocalTime endTime);
 }
