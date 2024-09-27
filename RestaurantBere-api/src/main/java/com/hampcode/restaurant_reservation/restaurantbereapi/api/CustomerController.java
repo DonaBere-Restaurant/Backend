@@ -38,7 +38,7 @@ public class CustomerController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try{
             customerServiceimpl.createCustomer(customerRequestDTO);
