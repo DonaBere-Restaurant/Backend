@@ -18,7 +18,7 @@ import java.util.List;
 public class ReservationRequestDTO {
     @NotBlank(message = "El id de la reserva no debe estar vacio")
     private int id;
-    //@NotBlank(message = "La fecha de la reserva no puede estar vacia")
+    @NotBlank(message = "La fecha de la reserva no puede estar vacia")
     //@Future(message = "La fecha debe ser una fecha futura")
     private LocalDate date;
 
@@ -33,4 +33,5 @@ public class ReservationRequestDTO {
     private List<OrderDishDTO> orderDishes;
 
     private List<ReservationTable> tables;
+    private String paymentToken;
 }

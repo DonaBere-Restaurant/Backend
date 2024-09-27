@@ -6,11 +6,16 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationT
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.CustomerService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cglib.core.Local;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +46,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ReservationTablesMapper reservationTablesMapper;
     @Autowired
     private ResTableRepository resTableRepository;
+    @Autowired
+    private ReservationMapper rMapper;
 
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
@@ -57,10 +64,14 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationResponseDTO createReservation(ReservationRequestDTO reservationRequestDTO) {
         LocalTime startTime = reservationRequestDTO.getStartTime();
-        //LocalTime endTime = startTime.plusHours(2);
         LocalTime endTime = startTime.plusHours(2);
         Reservation reservation = reservationMapper.convertToEntity(reservationRequestDTO);
+        if((reservation.getDate()).isBefore(LocalDate.now()))
+        {
+            throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
+        }
         reservation.setEndTime(endTime);
+        reservation.setCreatedTime(LocalDateTime.now());
         reservationRespository.save(reservation);
         return reservationMapper.convertToDTO(reservation);
     }
@@ -91,6 +102,9 @@ public class ReservationServiceImpl implements ReservationService {
         }
         if (reservationRequestDTO.getPriceTotal() != 0) {
             reservation.setPriceTotal(reservationRequestDTO.getPriceTotal());
+        }
+        if (reservationRequestDTO.getPaymentToken() != null) {
+            reservation.setPaymentToken(reservationRequestDTO.getPaymentToken());
         }
 
         if (reservationRequestDTO.getOrderDishes() != null) {
@@ -156,22 +170,54 @@ public class ReservationServiceImpl implements ReservationService {
     @Scheduled(fixedRate = 60000) // Por ejemplo, cada 60 segundos
     public void scheduledFreeTables() {
         System.out.println("Ejecutando la tarea programada para liberar mesas...");
+        checkPayment();
         checkAndFreeTables();
     }
     @Override
     public void freeOccupiedTables(int reservationId) {
         Reservation reservation = reservationRespository.findById(reservationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
         LocalTime endTime = reservation.getEndTime();
-        LocalTime currentTime = LocalTime.now(); // Obtiene la hora actual
+        LocalTime currentTime = LocalTime.now();
+
 
         if (currentTime.isAfter(endTime)) {
-            for (ReservationTable reservationTable : reservation.getReservationTables()) {
-                ResTable table = reservationTable.getResTable();
-                table.setStatus(0); // Cambia el estado a "libre"
-                resTableRepository.save(table); // Guarda el estado actualizado de la mesa
-            }
+            freeTables(reservation);
+        }
+
+
+        LocalDateTime reservationCreationTime = reservation.getCreatedTime();
+        LocalDateTime paymentDeadlineTime = reservationCreationTime.plusMinutes(15);
+
+        System.out.println("Payment deadline: " + paymentDeadlineTime + " Current time: " + LocalDateTime.now());
+
+        if (LocalDateTime.now().isAfter(paymentDeadlineTime) && !reservation.getPaymentstatus()) {
+
+            freeTables(reservation);
+            deleteReservation(reservation.getId());
+        }
+    }
+
+    // Helper method to free tables associated with the reservation
+    private void freeTables(Reservation reservation) {
+        for (ReservationTable reservationTable : reservation.getReservationTables()) {
+            ResTable table = reservationTable.getResTable();
+            table.setStatus(0); // Set the table status to "free"
+            resTableRepository.save(table); // Save the updated table status
+        }
+    }
+
+    @Override
+    public void checkPayment() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startOfDay = currentDateTime.toLocalDate().atStartOfDay(); // Inicio del día
+        LocalDateTime endOfDay = currentDateTime.toLocalDate().atTime(23, 59, 59); // Fin del día
+
+        // Buscar reservas creadas en el día actual
+        List<Reservation> reservations = reservationRespository.findAllByCreatedTimeBetween(startOfDay, endOfDay);
+        for (Reservation reservation : reservations) {
+            freeOccupiedTables(reservation.getId());
         }
     }
 
@@ -188,5 +234,35 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public void deleteReservation(int id) {
         reservationRespository.deleteById(id);
+    }
+    @Override
+    public void updatePaymentStatus(String token, boolean status) {
+        // Buscar la reserva correspondiente al token
+        Reservation reservation = reservationRespository.findByPaymentToken(token);
+        if (reservation != null) {
+            // Actualizar el estado de pago de la reserva
+            reservation.setPaymentstatus(status);
+            reservationRespository.save(reservation);  // Guardar los cambios en la base de datos
+        } else {
+            throw new EntityNotFoundException("No se encontró la reserva con el token especificado.");
+        }
+    }
+
+
+    public boolean isTableAvailable(int tableId, LocalDate startDate, LocalTime startTime, LocalTime endTime) {
+
+        List<Reservation> overlappingReservations = reservationRespository.findByTableAndTimeRange(tableId, startDate,startTime ,endTime);
+
+        // Recorre las reservas para ver si alguna incluye la mesa específica
+        for (Reservation reservation : overlappingReservations) {
+            for (ReservationTable reservationTable : reservation.getReservationTables()) {
+                if (reservationTable.getResTable().getId() == tableId) {
+                    // Si se encuentra la mesa ocupada en ese rango de tiempo, retorna false
+                    return false;
+                }
+            }
+        }
+        // Si no hay reservas que coincidan, la mesa está disponible
+        return true;
     }
 }
