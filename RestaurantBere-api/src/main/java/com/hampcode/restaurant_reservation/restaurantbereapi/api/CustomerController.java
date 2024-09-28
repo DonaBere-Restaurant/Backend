@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class CustomerController {
 
     private final CustomerServiceImpl customerServiceimpl;

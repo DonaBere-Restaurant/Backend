@@ -8,6 +8,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Custom
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.CustomerRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.CustomerService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
