@@ -7,6 +7,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Custom
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.CustomerServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class CustomerController {
-
+    @Autowired
     private final CustomerServiceImpl customerServiceimpl;
 
     @GetMapping
