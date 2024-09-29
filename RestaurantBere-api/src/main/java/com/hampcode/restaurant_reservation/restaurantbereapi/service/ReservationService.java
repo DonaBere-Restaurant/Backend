@@ -4,6 +4,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.Reservati
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,5 @@ public interface ReservationService {
     public void checkPayment();
     public void updatePaymentStatus(String token,boolean status);
     public boolean isTableAvailable(int tableId, LocalDate startDate, LocalTime startTime, LocalTime endTime);
+    public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime);
 }

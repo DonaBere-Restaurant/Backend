@@ -265,4 +265,7 @@ public class ReservationServiceImpl implements ReservationService {
         // Si no hay reservas que coincidan, la mesa está disponible
         return true;
     }
+    public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime) {
+        return reservationRespository.findAvailableTables(date, startTime, endTime);
+    }
 }
