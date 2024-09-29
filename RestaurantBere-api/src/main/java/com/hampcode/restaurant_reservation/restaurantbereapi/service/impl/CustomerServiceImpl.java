@@ -9,6 +9,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.repository.Customer
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.CustomerService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,9 @@ import java.util.Optional;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-
+    @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
     private CustomerMapper customerMapper;
 
     @Transactional(readOnly = true)
