@@ -1,9 +1,11 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.CustomerMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomerRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomerResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.CustomerRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.CustomerServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -21,7 +23,8 @@ import java.util.List;
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;
-
+    @Autowired
+    private final CustomerMapper customerMapper;
     @GetMapping
     public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
         List<CustomerResponseDTO> customers = customerServiceimpl.getAllCustomers();
@@ -41,10 +44,11 @@ public class CustomerController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+    public ResponseEntity<?> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try{
-            customerServiceimpl.createCustomer(customerRequestDTO);
-            return new ResponseEntity<>("Cuenta creada con éxito", HttpStatus.CREATED);
+            int id = customerServiceimpl.createCustomer(customerRequestDTO).getId();
+
+            return new ResponseEntity<>(id, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {

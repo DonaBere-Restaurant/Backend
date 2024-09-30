@@ -6,16 +6,11 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationT
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.*;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.CustomerService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cglib.core.Local;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,11 +109,13 @@ public class ReservationServiceImpl implements ReservationService {
                 // Obtener el plato a partir del ID
                 Dish dish = dishRepository.findById(orderDishDTO.getDishId())
                         .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado con ID: " + orderDishDTO.getDishId()));
-
+                Integer quantity = orderDishDTO.getQuantity();
                 // Crear el objeto Order y asignar el Dish y Reservation
                 Order newOrder = new Order();
                 OrderDishId orderDishId = new OrderDishId(orderDishDTO.getDishId(), reservation.getId());
+
                 newOrder.setId(orderDishId);
+                newOrder.setQuantity(quantity);
                 newOrder.setDish(dish);
                 newOrder.setReservation(reservation);
 

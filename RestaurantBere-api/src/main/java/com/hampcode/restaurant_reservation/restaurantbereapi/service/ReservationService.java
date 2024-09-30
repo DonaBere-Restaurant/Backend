@@ -1,12 +1,9 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationDishesRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
