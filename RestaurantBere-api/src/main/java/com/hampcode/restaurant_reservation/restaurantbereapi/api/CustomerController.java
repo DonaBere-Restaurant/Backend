@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,16 +45,27 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+    
+/*public ResponseEntity<?> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try{
             int id = customerServiceimpl.createCustomer(customerRequestDTO).getId();
 
-            return new ResponseEntity<>(id, HttpStatus.CREATED);
+            return new ResponseEntity<>(id, HttpStatus.CREATED);*/
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+        try{
+            customerServiceimpl.createCustomer(customerRequestDTO);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Cuenta creada con éxito");
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
