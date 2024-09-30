@@ -42,7 +42,7 @@ public class PaypalController {
 
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
-        String returnUrl = "http://localhost:8080/api/v1/admin/payments/payment";
+        String returnUrl = "https://restaurantbere-52059.web.app/api/v1/admin/payments/payment";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         try {
             String orderId = paypalService.createOrder(totalAmount, returnUrl, cancelUrl);
@@ -90,7 +90,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "https://restaurantbere-52059.web.app/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
+        String returnUrl = "https://backend-bdik.onrender.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
 
