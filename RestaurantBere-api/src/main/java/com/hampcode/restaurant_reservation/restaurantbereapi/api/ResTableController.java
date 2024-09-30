@@ -26,12 +26,13 @@ public class ResTableController {
     ReservationService reservationService;
     @Autowired
     ResTableMapper resTableMapper;
-
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/admin/mesas")
     public ResponseEntity<List<ResTableResponseDTO>> getAllTables() {
         List<ResTableResponseDTO> tables = resTableService.getAllResTables();
         return new ResponseEntity<>(tables, HttpStatus.OK);
     }
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/mesas")
     public ResponseEntity<List<ResTableResponseDTO>> getAllFreeTables(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
@@ -42,6 +43,7 @@ public class ResTableController {
 
         return new ResponseEntity<>(resTableMapper.convertToListDTO(availableTables), HttpStatus.OK);
     }
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/admin/mesas/{id}")
     public ResponseEntity<ResTableResponseDTO> getTableById(@PathVariable int id) {
         ResTableResponseDTO resTable = resTableService.getResTableById(id);
@@ -53,7 +55,7 @@ public class ResTableController {
             return new ResponseEntity<>(resTable, HttpStatus.OK);
         }
     }
-
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PostMapping("/admin/mesas")
     public ResponseEntity<?> createTable(@RequestBody ResTableRequestDTO resTableRequestDTO) {
          ResTableResponseDTO table = resTableService.createResTable(resTableRequestDTO);
