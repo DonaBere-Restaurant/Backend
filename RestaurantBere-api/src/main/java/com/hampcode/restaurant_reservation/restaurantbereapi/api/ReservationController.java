@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class ReservationController {
     @Autowired
     ReservationService reservationService;
@@ -132,7 +132,7 @@ public class ReservationController {
         ReservationResponseDTO responseDTO = mapper.convertToDTO(reservation);
         return ResponseEntity.ok(responseDTO);
     }
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PostMapping("/dia/mesas/menu")
     public ResponseEntity<?> reservationMenu(@RequestBody ReservationDishesRequestDTO reservationDishesRequestDTO) {
         // Verificar si la reserva existe
@@ -189,7 +189,7 @@ public class ReservationController {
 
         return ResponseEntity.ok(response);
     }
-
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PostMapping("/dia/mesas/menu/datos")
     public ResponseEntity<ReservationResponseDTO> updateReservationWithCustomer(@RequestBody ReservationRequestDTO reservationRequestDTO) {
 
