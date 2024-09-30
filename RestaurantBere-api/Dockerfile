@@ -4,6 +4,6 @@
 
 # FROM openjdk:21-jdk-slim
 FROM amazoncorretto:21-alpine-jdk
-COPY /target/RestaurantBere-api-0.0.1-SNAPSHOT.jar app.jar
+COPY /RestaurantBere-api/target/RestaurantBere-api-0.0.1-SNAPSHOT.jar app.jar
 # EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
