@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class Customer {
     @Column(name = "cus_mail_vc", nullable = false)
     private String email;
 
-    @Column(name = "cus_pas_vc", nullable = false)
+    @Column(name = "cus_pas_vc", nullable = true)
     private String password;
 
     @Column(name = "cus_add_vc")

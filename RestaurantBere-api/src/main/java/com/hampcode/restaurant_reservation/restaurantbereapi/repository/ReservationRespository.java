@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.repository;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,12 @@ public interface ReservationRespository extends JpaRepository<Reservation, Integ
                                               @Param("date") LocalDate date,
                                               @Param("startTime") LocalTime startTime,
                                               @Param("endTime") LocalTime endTime);
+    @Query("SELECT rt FROM ResTable rt LEFT JOIN ReservationTable r ON rt.id = r.resTable.id " +
+            "WHERE r.id IS NULL OR rt.id NOT IN (" +
+            "SELECT rt2.resTable.id FROM Reservation r2 JOIN r2.reservationTables rt2 " +
+            "WHERE r2.date = :date AND " +
+            "((r2.startTime < :endTime) AND (r2.endTime > :startTime)))")
+    List<ResTable> findAvailableTables(@Param("date") LocalDate date,
+                                       @Param("startTime") LocalTime startTime,
+                                       @Param("endTime") LocalTime endTime);
 }

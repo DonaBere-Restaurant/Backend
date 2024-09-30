@@ -13,11 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class DishController {
 
     private DishServiceImpl dishServiceImpl;
 
-    @GetMapping ("/dia/mesas/menu")
+    @GetMapping ("/reservasion/dia/mesas/menu")
     public ResponseEntity<List<DishResponseDTO>> getAllDishes() {
         List<DishResponseDTO> dishes = dishServiceImpl.getAllDishes();
         return new ResponseEntity<>(dishes, HttpStatus.OK);

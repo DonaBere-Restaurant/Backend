@@ -8,5 +8,5 @@ import lombok.Data;
 public class OrderDishDTO {
     @NotNull(message = "El ID del plato no puede ser nulo")
     private Integer  dishId;
-
+    private Integer quantity;
 }
