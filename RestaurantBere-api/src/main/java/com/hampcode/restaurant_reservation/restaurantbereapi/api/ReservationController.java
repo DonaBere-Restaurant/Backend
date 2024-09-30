@@ -1,27 +1,24 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.exception.TableNotAvailableException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.ReservationConfirmationImpl;
-import jakarta.persistence.Column;
-import jakarta.persistence.PersistenceUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ReservationController {
     @Autowired
     ReservationService reservationService;
@@ -135,7 +132,7 @@ public class ReservationController {
         ReservationResponseDTO responseDTO = mapper.convertToDTO(reservation);
         return ResponseEntity.ok(responseDTO);
     }
-
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/dia/mesas/menu")
     public ResponseEntity<?> reservationMenu(@RequestBody ReservationDishesRequestDTO reservationDishesRequestDTO) {
         // Verificar si la reserva existe
@@ -160,7 +157,7 @@ public class ReservationController {
             }
 
             Integer dishId = orderDishDTO.getDishId();
-
+            Integer quantity = orderDishDTO.getQuantity();
             // Buscar el plato en la base de datos
             Dish dish = dishMapper.convertToEntity(dishService.getDishById(dishId));
 
@@ -175,8 +172,9 @@ public class ReservationController {
             Order order = new Order();
             order.setId(orderDishId); // Asigna la clave primaria compuesta
             order.setDish(dish); // Asignar el plato encontrado al pedido
+            order.setQuantity(quantity);//Asignar la cantidad de platos
             platos.add(order); // Agregar el pedido a la lista
-            totalPagar += dish.getPrice(); // Sumar el precio al total
+            totalPagar = (dish.getPrice()*quantity)+totalPagar; // Sumar el precio al total
         }
 
         // Asignar el total a la reserva
@@ -185,8 +183,11 @@ public class ReservationController {
 
         // Guardar la reserva actualizada
        reservationService.updateReservation(existingReservation.getId(), mapper.convertToRequestDTO(existingReservation)); // Método para actualizar la reserva
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Se agregó correctamente su pedido");
+        response.put("total", totalPagar);
 
-        return ResponseEntity.ok("Se agregó correctamente su pedido. Total a pagar: " + totalPagar);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/dia/mesas/menu/datos")
@@ -217,6 +218,7 @@ public class ReservationController {
 
         return ResponseEntity.ok(responseDTO);
     }
+
     @GetMapping
     public ResponseEntity<List<ReservationResponseDTO>> getReservations() {
         List<ReservationResponseDTO> reservations =reservationService.getAllReservations();

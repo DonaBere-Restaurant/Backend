@@ -17,7 +17,8 @@ public class Order {
     @MapsId("dishId")
     @JoinColumn(name = "dis_id_in")
     private Dish dish;
-
+    @Column(name="res_can_in")
+    private int quantity;
     @ManyToOne
     @MapsId("reservationId")
     @JoinColumn(name = "res_id_in")
