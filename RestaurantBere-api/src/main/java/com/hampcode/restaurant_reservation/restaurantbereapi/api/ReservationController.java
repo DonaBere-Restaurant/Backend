@@ -43,7 +43,7 @@ public class ReservationController {
 
         return  reservationService.createReservation(reservationRequestDTO);
     }
-
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PostMapping("/dia/mesas")
     public ResponseEntity<?> reservation(@RequestBody ReservationTablesRequestDTO reservationTablesRequestDTO) {
         // Obtener la reserva
