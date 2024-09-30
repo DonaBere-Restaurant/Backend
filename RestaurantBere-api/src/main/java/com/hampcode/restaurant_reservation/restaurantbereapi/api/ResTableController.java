@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ResTableController {
     @Autowired
     ResTableService resTableService;

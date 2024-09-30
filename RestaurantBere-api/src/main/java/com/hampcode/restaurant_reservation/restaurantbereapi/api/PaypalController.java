@@ -113,7 +113,7 @@ public class PaypalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error occurred during payment process."));
         }
     }
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app/")
+    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/pay-reservation/success")
     public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
         boolean successPayment = false; // variable de control para enviar el correo si se completó el pago

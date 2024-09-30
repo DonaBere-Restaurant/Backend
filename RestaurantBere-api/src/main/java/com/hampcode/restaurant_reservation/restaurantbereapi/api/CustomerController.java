@@ -21,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;
@@ -57,6 +57,7 @@ public class CustomerController {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Cuenta creada con éxito");
             */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/register")
     public ResponseEntity<?> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try{
