@@ -51,13 +51,18 @@ public class CustomerController {
             int id = customerServiceimpl.createCustomer(customerRequestDTO).getId();
 
             return new ResponseEntity<>(id, HttpStatus.CREATED);*/
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+    /* public ResponseEntity<Map<String, String>> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
         try{
             customerServiceimpl.createCustomer(customerRequestDTO);
             Map<String, String> response = new HashMap<>();
             response.put("message", "Cuenta creada con éxito");
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            */
+    @PostMapping("/register")
+    public ResponseEntity<?> createAccount(@RequestBody CustomerRequestDTO customerRequestDTO) {
+        try{
+            int id = customerServiceimpl.createCustomer(customerRequestDTO).getId();
+
+            return new ResponseEntity<>(id, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             Map<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
