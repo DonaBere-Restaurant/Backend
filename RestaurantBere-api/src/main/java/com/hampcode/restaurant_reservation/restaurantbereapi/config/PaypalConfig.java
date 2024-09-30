@@ -9,14 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PaypalConfig {
 
-    @Value("${paypal.client-id}")
-    private String clientId;
+    private String clientId = "AYXMZvbrwZHHhrPIB-LtJ6RNtIUVwSBqVyXQ9bs2dePUPKKITR-TOoLCHr7nbrv1or33Zgp9a9BmYsg7";
 
-    @Value("${paypal.client-secret}")
-    private String clientSecret;
+    private String clientSecret = "EC2hTWdCj_mok7TT_ceGKTL939JIuurIhS4728mNPG0qw98a4xjPJur__b6Ssey6D5yPHNOfNalt-LJO";
 
-    @Value("${paypal.mode}")
-    private String mode;
+    private String mode = "sandbox";
 
     @Bean
     public PayPalHttpClient payPalHttpClient() {
