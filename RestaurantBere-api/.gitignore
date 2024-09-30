@@ -1,5 +1,5 @@
 HELP.md
-target/
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+###Paypal credentials
+
 
 ### NetBeans ###
 /nbproject/private/
