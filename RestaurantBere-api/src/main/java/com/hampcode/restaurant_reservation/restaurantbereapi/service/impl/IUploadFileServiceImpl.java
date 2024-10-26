@@ -17,8 +17,7 @@ import java.util.UUID;
 @Service
 public class IUploadFileServiceImpl implements IUploadFileService {
 
-    //private final static String UPLOADS_FOLDER = "uploads/";
-    private final static String UPLOADS_FOLDER = "D:/SEXTOCICLO/proyecto_inso/Backend/RestaurantBere-api/uploads/";
+    private final static String UPLOADS_FOLDER = "uploads/";
 
     @Override
     public Resource load(String filename) throws MalformedURLException {
@@ -40,10 +39,9 @@ public class IUploadFileServiceImpl implements IUploadFileService {
         }
 
         String uniqueFileName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
-        //Path rootPath = getPath(uniqueFileName);
+
         Path rootPath = uploadDir.resolve(uniqueFileName).toAbsolutePath();
 
-        //Files.copy(multipartFile.getInputStream(), rootPath);
         Files.copy(multipartFile.getInputStream(), rootPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }
