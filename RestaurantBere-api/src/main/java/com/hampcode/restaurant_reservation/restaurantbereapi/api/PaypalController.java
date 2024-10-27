@@ -36,7 +36,13 @@ public class PaypalController {
     @Autowired
     private ReservationConfirmationImpl reservationConfirmationImpl;
 
-    String[] bccRecipients = {"jaimepalominocuenca@gmail.com"};
+    String[] bccRecipients = {"restaurantbere@gmail.com",
+            "jpalominoc5@upao.edu.pe",
+            "jaguilarb3@upao.edu.pe",
+            "opadillar1@upao.edu.pe",
+            "gguevarav2@upao.edu.pe",
+            "dacevedov1@upao.edu.pe"
+    };
     @Autowired
     private ReservationRespository reservationRespository;
 
