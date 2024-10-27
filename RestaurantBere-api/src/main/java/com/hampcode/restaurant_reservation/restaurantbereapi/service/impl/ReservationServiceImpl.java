@@ -64,6 +64,10 @@ public class ReservationServiceImpl implements ReservationService {
         {
             throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
         }
+        if((reservation.getStartTime()).isBefore(LocalTime.now()))
+        {
+            throw new RuntimeException("La Hora de la reserva no debe ser menor a la actual");
+        }
         reservation.setEndTime(endTime);
         reservation.setCreatedTime(LocalDateTime.now());
         reservationRespository.save(reservation);
