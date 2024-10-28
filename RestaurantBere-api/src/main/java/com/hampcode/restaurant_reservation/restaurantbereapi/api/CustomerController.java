@@ -21,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;
