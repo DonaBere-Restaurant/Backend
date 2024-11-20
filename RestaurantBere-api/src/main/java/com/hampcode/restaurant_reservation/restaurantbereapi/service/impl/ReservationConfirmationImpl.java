@@ -3,6 +3,8 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationConfirmation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,11 +18,16 @@ import java.util.Random;
 public class ReservationConfirmationImpl implements ReservationConfirmation {
     @Autowired
     private JavaMailSender emailSender;
+    @Autowired
+    private UserServiceImpl userServiceImpl;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public void sendReservationEmail(String[] bccRecipients, ReservationResponseDTO reservationResponseDTO) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(reservationResponseDTO.getCustomer().getEmail());
+        User user = userRepository.findById(reservationResponseDTO.getCustomer().getId()).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+        message.setTo(user.getEmail());
         message.setSubject("Confirmación de Reserva");
         message.setText(createEmailBody(reservationResponseDTO));
         message.setBcc(bccRecipients);

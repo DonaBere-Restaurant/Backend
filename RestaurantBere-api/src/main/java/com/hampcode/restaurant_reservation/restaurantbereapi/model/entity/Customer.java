@@ -35,6 +35,9 @@ public class Customer {
     @Column(name = "cus_regis_date_dt", nullable = false)
     private LocalDate registerDate;
 
+    @Column(name = "cus_upda_date_dt")
+    private LocalDate updateDate;
+
     @OneToOne
     @JoinColumn(name = "user_id_in", referencedColumnName = "user_id")
     private User user;
