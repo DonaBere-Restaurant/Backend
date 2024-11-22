@@ -14,4 +14,6 @@ public interface UserService {
     UserProfileDTO getCustomerProfileById(Integer id);
 
     AuthResponseDTO login(LoginDTO loginDTO);
+
+    Integer getAuthenticatedUserIdFromJWT();
 }

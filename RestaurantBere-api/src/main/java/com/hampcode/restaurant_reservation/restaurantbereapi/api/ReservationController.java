@@ -4,6 +4,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,7 @@ public class ReservationController {
     @Autowired
     DishMapper dishMapper;
     @Autowired
-    CustomerService customerService;
-    @Autowired
-    CustomerMapper customerMapper;
+    UserRepository userRepository;
 
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
@@ -199,7 +198,7 @@ public class ReservationController {
             return ResponseEntity.badRequest().body(null);  // Si no existe, devolver error
         }
 
-        Customer customer = customerMapper.convertToEntity(customerService.getCustomerById(reservationRequestDTO.getCustomer().getId()));
+        User customer = userRepository.findById(existingReservation.getCustomer().getId()).orElse(null);
         if (customer == null) {
             return ResponseEntity.badRequest().body(null);
         }

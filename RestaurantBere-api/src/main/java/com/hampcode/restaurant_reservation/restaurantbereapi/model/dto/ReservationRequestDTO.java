@@ -23,7 +23,7 @@ public class ReservationRequestDTO {
     private LocalDate date;
 
     @NotNull(message = "El Id del cliente no puede estar vacio")
-    private Customer customer;
+    private User customer;
 
     //@NotBlank(message = "La hora de inicio de la reserva no puede estar vacía")
     private LocalTime startTime;
