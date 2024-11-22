@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class ResTableController {
     @Autowired
     ResTableService resTableService;
@@ -27,14 +27,14 @@ public class ResTableController {
     @Autowired
     ResTableMapper resTableMapper;
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/admin/mesas")
     public ResponseEntity<List<ResTableResponseDTO>> getAllTables() {
         List<ResTableResponseDTO> tables = resTableService.getAllResTables();
         return new ResponseEntity<>(tables, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/mesas")
     public ResponseEntity<List<ResTableResponseDTO>> getAllFreeTables(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reservationDate,
@@ -46,7 +46,7 @@ public class ResTableController {
         return new ResponseEntity<>(resTableMapper.convertToListDTO(availableTables), HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/admin/mesas/{id}")
     public ResponseEntity<ResTableResponseDTO> getTableById(@PathVariable int id) {
         ResTableResponseDTO resTable = resTableService.getResTableById(id);
@@ -59,7 +59,7 @@ public class ResTableController {
         }
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @PostMapping("/admin/mesas")
     public ResponseEntity<?> createTable(@RequestBody ResTableRequestDTO resTableRequestDTO) {
          ResTableResponseDTO table = resTableService.createResTable(resTableRequestDTO);

@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -36,7 +36,13 @@ public class PaypalController {
     @Autowired
     private ReservationConfirmationImpl reservationConfirmationImpl;
 
-    String[] bccRecipients = {"jaimepalominocuenca@gmail.com"};
+    String[] bccRecipients = {"restaurantbere@gmail.com",
+            "jpalominoc5@upao.edu.pe",
+            "jaguilarb3@upao.edu.pe",
+            "opadillar1@upao.edu.pe",
+            "gguevarav2@upao.edu.pe",
+            "dacevedov1@upao.edu.pe"
+    };
     @Autowired
     private ReservationRespository reservationRespository;
 
@@ -80,7 +86,7 @@ public class PaypalController {
             return "Ocurrió un error durante el proceso de pago.";
         }
     }
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/pay-reservation/{reservationid}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationid) {
         Reservation reservation = reservationService.findReservationById(reservationid);
@@ -114,7 +120,6 @@ public class PaypalController {
         }
     }
     //localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/izipay/success
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/pay-reservation/success")
     public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
         boolean successPayment = false; // variable de control para enviar el correo si se completó el pago
