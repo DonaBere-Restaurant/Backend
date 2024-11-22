@@ -41,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
-
+    /*
         if(customerRepository.findByEmail(customerRequestDTO.getEmail()).isPresent()){
             throw new RuntimeException("El correo ya está en uso");
         }else {
@@ -49,7 +49,8 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setRegisterDate(LocalDate.now());
             customerRepository.save(customer);
             return customerMapper.convertToDTO(customer);
-        }
+        }*/
+        return null;
     }
 
     @Transactional
@@ -57,7 +58,6 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cliente no encontrado con el numero:"+id));
         if(customerRequestDTO.getDni() != null)customer.setDni(customerRequestDTO.getDni());
         if(customerRequestDTO.getPhone() != null)customer.setPhone(customerRequestDTO.getPhone());
-        if(customerRequestDTO.getEmail() != null)customer.setEmail(customerRequestDTO.getEmail());
         if(customerRequestDTO.getAddress() != null)customer.setAddress(customerRequestDTO.getAddress());
 
         customer = customerRepository.save(customer);
@@ -72,10 +72,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean authenticateUser(String email, String password) {
-        Optional<Customer> userOptional = customerRepository.findByEmail(email);
+       /* Optional<Customer> userOptional = customerRepository.findByEmail(email);
         if (userOptional.isPresent()) {
             Customer user = userOptional.get();
             return user.getPassword().equals(password);
-        } return false;
+        } return false;*/
+    return false;
     }
 }

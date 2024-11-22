@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -86,7 +86,7 @@ public class PaypalController {
             return "Ocurrió un error durante el proceso de pago.";
         }
     }
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/pay-reservation/{reservationid}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationid) {
         Reservation reservation = reservationService.findReservationById(reservationid);
@@ -119,7 +119,7 @@ public class PaypalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error occurred during payment process."));
         }
     }
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
     @GetMapping("/pay-reservation/success")
     public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
         boolean successPayment = false; // variable de control para enviar el correo si se completó el pago

@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class DishController {
 
     private final DishServiceImpl dishServiceImpl;
@@ -33,7 +33,6 @@ public class DishController {
         return new ResponseEntity<>(dishes, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("admin/menu/{id}")
     public ResponseEntity<?> getDishById(@PathVariable int id) {
         DishResponseDTO dish = dishServiceImpl.getDishById(id);
@@ -45,7 +44,6 @@ public class DishController {
         }
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PostMapping("admin/menu")
     public ResponseEntity<String> createDish(@ModelAttribute DishRequestDTO dishRequestDTO) {
         try{
@@ -59,14 +57,12 @@ public class DishController {
 
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @PutMapping("admin/menu/{id}")
     public ResponseEntity<DishResponseDTO> updateDish (@PathVariable int id, @RequestBody DishRequestDTO dishRequestDTO){
         DishResponseDTO dish = dishServiceImpl.updateDish(id, dishRequestDTO);
         return new ResponseEntity<>(dish, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @DeleteMapping("admin/menu/{id}")
     public  ResponseEntity<?> deleteDish (@PathVariable int id) {
         dishServiceImpl.deleteDish(id);
