@@ -21,6 +21,12 @@ public class UserMapper {
         return modelMapper.map(userRegisterDTO, User.class);
     }
 
+    public User toEntity(UserProfileDTO userProfileDTO) {
+        User user =  modelMapper.map(userProfileDTO, User.class);
+
+        return user;
+
+    }
     public UserProfileDTO toUserProfileDTO(User user) {
          UserProfileDTO userProfileDTO = modelMapper.map(user, UserProfileDTO.class);
          if(user.getCustomer() != null){

@@ -14,11 +14,13 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepo
 import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
 import com.hampcode.restaurant_reservation.restaurantbereapi.security.UserPrincipal;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.UserService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -136,5 +138,23 @@ public class UserServiceImpl implements UserService {
         }
         User savedUser = userRepository.save(user);
         return userMapper.toUserProfileDTO(savedUser);
+    }
+@Override
+    public Integer getAuthenticatedUserIdFromJWT() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String token = (String) authentication.getCredentials(); // Obtén el token del objeto de autenticación
+
+            // Extraer el email del token
+            Claims claims = tokenProvider.getJwtParser().parseClaimsJws(token).getBody();
+            String email = claims.getSubject();
+
+
+            // Buscar el usuario usando el email
+            User user = userRepository.findByEmail(email).orElse(null); // Debes implementar este método en tu UserService
+            return user != null ? user.getId() : null;
+        }
+        return null; // Si no hay autenticación, devuelve null
     }
 }
