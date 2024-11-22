@@ -90,7 +90,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "https://backend-bdik.onrender.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
+        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
 
@@ -113,6 +113,7 @@ public class PaypalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error occurred during payment process."));
         }
     }
+    //localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/izipay/success
     @CrossOrigin(origins = "https://restaurantbere-52059.web.app")
     @GetMapping("/pay-reservation/success")
     public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {

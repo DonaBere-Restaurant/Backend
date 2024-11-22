@@ -19,6 +19,7 @@ public class PaypalServiceImpl implements PaypalService {
     private final PayPalHttpClient payPalHttpClient;
     @Autowired
     public PaypalServiceImpl(PaypalConfig paypalConfig) {
+
         this.payPalHttpClient = paypalConfig.payPalHttpClient();
     }
 
