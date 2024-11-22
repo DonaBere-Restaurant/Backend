@@ -198,7 +198,7 @@ public class ReservationController {
             return ResponseEntity.badRequest().body(null);  // Si no existe, devolver error
         }
 
-        User customer = userRepository.findById(existingReservation.getCustomer().getId()).orElse(null);
+        User customer = userRepository.findById(reservationRequestDTO.getCustomer().getId()).orElse(null);
         if (customer == null) {
             return ResponseEntity.badRequest().body(null);
         }

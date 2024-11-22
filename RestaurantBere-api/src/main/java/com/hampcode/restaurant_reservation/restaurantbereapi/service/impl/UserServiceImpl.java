@@ -139,6 +139,7 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         return userMapper.toUserProfileDTO(savedUser);
     }
+
 @Override
     public Integer getAuthenticatedUserIdFromJWT() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

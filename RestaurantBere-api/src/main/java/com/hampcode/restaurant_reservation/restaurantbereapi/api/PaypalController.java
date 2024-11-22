@@ -86,7 +86,7 @@ public class PaypalController {
             return "Ocurrió un error durante el proceso de pago.";
         }
     }
-    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
+
     @GetMapping("/pay-reservation/{reservationid}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationid) {
         Reservation reservation = reservationService.findReservationById(reservationid);
@@ -96,7 +96,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "https://backend-bdik.onrender.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
+        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
 
@@ -119,7 +119,7 @@ public class PaypalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error occurred during payment process."));
         }
     }
-    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
+    //localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/izipay/success
     @GetMapping("/pay-reservation/success")
     public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
         boolean successPayment = false; // variable de control para enviar el correo si se completó el pago

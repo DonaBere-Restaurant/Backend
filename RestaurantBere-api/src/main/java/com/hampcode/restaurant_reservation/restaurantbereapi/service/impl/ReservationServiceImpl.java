@@ -31,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private final ReservationMapper reservationMapper;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private DishRepository dishRepository;
     @Autowired
