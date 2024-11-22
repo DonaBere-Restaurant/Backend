@@ -36,7 +36,6 @@ public class ReservationController {
     @Autowired
     UserRepository userRepository;
 
-
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
     {
