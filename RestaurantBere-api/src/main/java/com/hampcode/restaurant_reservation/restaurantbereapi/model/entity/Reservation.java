@@ -43,7 +43,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "customer_cus_id_in", nullable = true)
-    private Customer customer;
+    private User customer;
 
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)

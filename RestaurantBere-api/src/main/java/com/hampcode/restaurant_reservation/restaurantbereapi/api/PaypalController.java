@@ -86,7 +86,7 @@ public class PaypalController {
             return "Ocurrió un error durante el proceso de pago.";
         }
     }
-    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
+
     @GetMapping("/pay-reservation/{reservationid}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationid) {
         Reservation reservation = reservationService.findReservationById(reservationid);

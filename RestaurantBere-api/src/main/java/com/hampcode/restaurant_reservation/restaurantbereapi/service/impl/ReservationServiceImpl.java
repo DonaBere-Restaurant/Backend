@@ -31,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private final ReservationMapper reservationMapper;
     @Autowired
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     @Autowired
     private DishRepository dishRepository;
     @Autowired
@@ -94,7 +94,7 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setStartTime(reservationRequestDTO.getStartTime());
         }
         if (reservationRequestDTO.getCustomer() != null && reservationRequestDTO.getCustomer().getId() != 0) {
-            Customer customer = customerRepository.findById(reservationRequestDTO.getCustomer().getId())
+            User customer = userRepository.findById(reservationRequestDTO.getCustomer().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con el ID: " + reservationRequestDTO.getCustomer().getId()));
             reservation.setCustomer(customer);
         }
