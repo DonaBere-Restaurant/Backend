@@ -64,4 +64,7 @@ public class Reservation {
     public boolean getPaymentstatus() {
         return paymentstatus;
     }
+
+    @Column(name = "res_sta_id_in", nullable = true)
+    private int status; // 1: Reservado, 2:Curso, 3: Finalizado, 4: Cancelado
 }

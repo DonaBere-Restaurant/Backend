@@ -6,18 +6,23 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationT
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
+import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +47,8 @@ public class ReservationServiceImpl implements ReservationService {
     private ResTableRepository resTableRepository;
     @Autowired
     private ReservationMapper rMapper;
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
@@ -268,4 +275,55 @@ public class ReservationServiceImpl implements ReservationService {
     public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime) {
         return reservationRespository.findAvailableTables(date, startTime, endTime);
     }
+
+    // Metodo para obtener el usuario autenticado desde el JWT
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String token = (String) authentication.getCredentials();
+            Claims claims = tokenProvider.getJwtParser().parseClaimsJws(token).getBody();
+            String email = claims.getSubject();
+
+            // Buscar al usuario con el email del JWT
+            return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        }
+        throw new RuntimeException("Usuario no autenticado");
+    }
+
+    @Transactional
+    public String cancelReservation(int reservationId) {
+        // Obtener el usuario autenticado
+        User authenticatedUser = getAuthenticatedUser();  // Método que obtiene el usuario autenticado desde el JWT
+
+        // Buscar la reserva
+        Reservation reservation = reservationRespository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        // Verificar si el usuario autenticado es el cliente asociado a la reserva mediante los IDs
+        if (!reservation.getCustomer().getId().equals(authenticatedUser.getId())) {
+            return "No tienes permisos para cancelar esta reserva.";
+        }
+
+        // Verificar si quedan menos de 4 horas para la reserva
+        LocalDateTime reservationTime = LocalDateTime.of(reservation.getDate(), reservation.getStartTime());
+        long hoursRemaining = ChronoUnit.HOURS.between(LocalDateTime.now(), reservationTime);
+
+        if (hoursRemaining < 4) {
+            return "No se puede cancelar la reserva con menos de 4 horas de antelación.";
+        }
+
+        // Liberar las mesas asociadas a la reserva
+        freeTables(reservation);
+
+        // Cambiar el estado de la reserva a "Cancelado" (status = 3)
+        reservation.setStatus(4);  // 4 = Cancelado
+        reservationRespository.save(reservation);  // Guardar la reserva con el nuevo estado
+
+        // Imprimir un mensaje en la consola de éxito
+        System.out.println("Eliminación de reserva exitosa. Las mesas han sido liberadas.");
+
+        return "Reserva cancelada exitosamente. Las mesas han sido liberadas.";
+    }
+
 }

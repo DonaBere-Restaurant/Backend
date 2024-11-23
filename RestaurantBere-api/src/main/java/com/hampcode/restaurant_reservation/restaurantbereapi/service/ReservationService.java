@@ -25,4 +25,5 @@ public interface ReservationService {
     public void updatePaymentStatus(String token,boolean status);
     public boolean isTableAvailable(int tableId, LocalDate startDate, LocalTime startTime, LocalTime endTime);
     public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime);
+    public String cancelReservation(int id);
 }
