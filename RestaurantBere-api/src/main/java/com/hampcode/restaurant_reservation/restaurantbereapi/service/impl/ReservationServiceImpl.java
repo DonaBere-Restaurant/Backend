@@ -316,7 +316,7 @@ public class ReservationServiceImpl implements ReservationService {
         // Liberar las mesas asociadas a la reserva
         freeTables(reservation);
 
-        // Cambiar el estado de la reserva a "Cancelado" (status = 3)
+        // Cambiar el estado de la reserva a "Cancelado" (status = 4)
         reservation.setStatus(4);  // 4 = Cancelado
         reservationRespository.save(reservation);  // Guardar la reserva con el nuevo estado
 
