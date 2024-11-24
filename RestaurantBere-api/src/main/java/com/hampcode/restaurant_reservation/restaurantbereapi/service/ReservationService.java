@@ -29,5 +29,5 @@ public interface ReservationService {
     public String cancelReservation(int id);
     List<Reservation> getReservationsByCustomer(int customerId);
     public List<CustomReservationResponseDTO> getAllReservationsC();
-
+    public Integer getAuthenticatedUserIdFromJWT();
 }
