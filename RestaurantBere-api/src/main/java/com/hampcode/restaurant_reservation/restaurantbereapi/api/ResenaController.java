@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/Reseña")
@@ -20,7 +21,7 @@ public class ResenaController {
 
 
     @PostMapping("/crear/{id}")
-    public ResponseEntity<?> createResena(@PathVariable Integer id, @RequestBody ResenaRequestDTO resenaRequestDTO) {
+    public ResponseEntity<ResenaResponseDTO> createResena(@PathVariable Integer id, @RequestBody ResenaRequestDTO resenaRequestDTO) {
         try {
             // Asignar el ID de la reserva al DTO
             resenaRequestDTO.setReservationId(id);
@@ -29,10 +30,10 @@ public class ResenaController {
             ResenaResponseDTO resena = resenaService.publicar_resena(resenaRequestDTO);
 
             // Retornar una respuesta con el DTO de la reseña creada
-            return new ResponseEntity<>("Reseña creada correctamente:\n" + resena, HttpStatus.CREATED);
+            return new ResponseEntity<>(resena, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            // Manejar errores y retornar un mensaje claro
-            return new ResponseEntity<>("Error al crear la reseña: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            // Manejar errores y retornar un estado BAD_REQUEST con mensaje
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error al crear la reseña: " + e.getMessage());
         }
     }
 }
