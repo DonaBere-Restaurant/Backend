@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -329,6 +330,47 @@ public class ReservationServiceImpl implements ReservationService {
             return user != null ? user.getId() : null;  // Si el usuario existe, devuelve su ID
         }
         return null; // Si no hay autenticación, devuelve null
+    }
+
+    @Transactional
+    public String cancelReservation(int reservationId) {
+        // Obtener el usuario autenticado
+        User authenticatedUser = getAuthenticatedUser();  // Metodo que obtiene el usuario autenticado desde el JWT
+
+        // Buscar la reserva
+        Reservation reservation = reservationRespository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
+
+        // Verificar si el usuario autenticado es el cliente asociado a la reserva mediante los IDs
+        if (!reservation.getCustomer().getId().equals(authenticatedUser.getId())) {
+            return "No tienes permisos para cancelar esta reserva.";
+        }
+
+        // Verificar si quedan menos de 4 horas para la reserva
+        LocalDateTime reservationTime = LocalDateTime.of(reservation.getDate(), reservation.getStartTime());
+        long hoursRemaining = ChronoUnit.HOURS.between(LocalDateTime.now(), reservationTime);
+
+        if (hoursRemaining < 4) {
+            return "No se puede cancelar la reserva con menos de 4 horas de antelación.";
+        }
+
+        // Liberar las mesas asociadas a la reserva
+        freeTables(reservation);
+
+        // Cambiar el estado de la reserva a "Cancelado" (status = 4)
+        reservation.setStatus(2);  // 2 = Cancelado
+        reservationRespository.save(reservation);  // Guardar la reserva con el nuevo estado
+
+        // Imprimir un mensaje en la consola de éxito
+        System.out.println("Eliminación de reserva exitosa. Las mesas han sido liberadas.");
+
+        return "Reserva cancelada exitosamente. Las mesas han sido liberadas.";
+    }
+
+    private User getAuthenticatedUser() {
+        Integer userId = getAuthenticatedUserIdFromJWT();
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
 }

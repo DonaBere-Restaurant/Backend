@@ -203,4 +203,16 @@ public class ReservationController {
         return new ResponseEntity<>(reservationService.getReservationById(id), HttpStatus.OK);
     }
 
+    @PutMapping("/{reservationId}/cancel")
+    public ResponseEntity<String> cancelReservation(@PathVariable int reservationId) {
+        // Llamar al servicio de cancelación
+        String result = reservationService.cancelReservation(reservationId);  // Llamamos al metodo cancelReservation
+
+        if (result.equals("Reserva cancelada exitosamente. Las mesas han sido liberadas.")) {
+            return new ResponseEntity<>(result, HttpStatus.OK);  // Devuelve OK si la cancelación es exitosa
+        } else {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);  // Si algo sale mal, devuelve BAD_REQUEST
+        }
+    }
+
 }
