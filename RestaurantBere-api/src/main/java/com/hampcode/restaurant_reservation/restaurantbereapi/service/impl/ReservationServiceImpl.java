@@ -480,4 +480,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservationMapper.convertToDTO(reservationRespository.save(reservation));
     }
+
+    @Override
+    public Reservation getMostRecentReservationByCustomerId(int customerId) {
+        List<Reservation> reservations = reservationRespository.findMostRecentReservationByCustomerId(customerId);
+        if (reservations.isEmpty()) {
+            throw new ResourceNotFoundException("No se encontró ninguna reserva para el cliente con ID: " + customerId);
+        }
+        return reservations.get(0); // Devuelve la más reciente
+    }
 }
