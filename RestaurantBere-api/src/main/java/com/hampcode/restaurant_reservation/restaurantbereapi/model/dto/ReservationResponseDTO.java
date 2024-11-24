@@ -25,15 +25,8 @@ public class ReservationResponseDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private List<ReservationTable> tables;
-
-    private int tableId;
     private List<OrderResponseDTO> orderDishes;
     private double priceTotal;
+    boolean refoundstatus;
 
-    public ReservationResponseDTO(int id, LocalDate date, LocalTime startTime, LocalTime endTime) {
-        this.id = id;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
 }

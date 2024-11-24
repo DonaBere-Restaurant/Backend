@@ -13,6 +13,8 @@ import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -87,7 +89,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new RuntimeException("El restaurante aun no esta abierto");
         }
         if (reservation.getStartTime().isAfter(LocalTime.parse("23:00:00"))) {
-            throw new RuntimeException("El restaurante ya esta cerrada");
+            throw new RuntimeException("El restaurante ya esta cerrado");
         }
 
         // Obtener el ID del usuario desde el JWT
@@ -385,5 +387,97 @@ public class ReservationServiceImpl implements ReservationService {
         return reservations.stream()
                 .map(reservationMapper::convertToCustomDTO)  // Mapea cada reserva a CustomReservationResponseDTO
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void changeRefoundStatus(int reservationId) {
+        Reservation reservation = reservationRespository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new EntityNotFoundException("Reserva no encontrada");
+        }
+        if(reservation.getRefoundstatus())
+        {
+            throw new IllegalArgumentException("La reserva ya se ha marcado como rembolsado");
+        }
+        if(!reservation.getPaymentstatus())
+        {
+            throw new IllegalArgumentException("La reserva aun no ha sido pagada");
+        }
+        LocalDateTime createdTime = reservation.getCreatedTime();
+
+        if (createdTime.plusHours(24).isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La reserva no puede marcarse como reembolsada ya que han pasado más de 24 horas");
+        }
+            reservation.setRefoundstatus(true);
+            reservationRespository.save(reservation);
+    }
+
+    @Override
+    public List<ReservationResponseDTO> getPayedReservations() {
+        return reservationMapper.convertToListDTO(reservationRespository.findByPaymentstatusTrue());
+    }
+
+    @Override
+    public ReservationResponseDTO updateDateReservation(int reservationId, int customerId, LocalDate newStartDate, LocalTime newStartTime) {
+        Reservation reservation = reservationRespository.findById(reservationId).orElse(null);
+
+        if(reservation==null)
+        {
+            throw new EntityNotFoundException("Reserva no encontrada");
+        }
+        if(newStartDate==null)
+        {
+            newStartDate=reservation.getDate();
+        }
+        if(newStartTime==null)
+        {
+            newStartTime=reservation.getStartTime();
+        }
+        if(reservation.getCustomer() ==null)
+        {throw new EntityNotFoundException("Usuario no encontrado");
+        }
+        if(reservation.getCustomer().getId()!=(customerId))
+        {
+          throw new IllegalArgumentException("No puedes editar una reserva que no es tuya");
+        }
+
+        // Validar la fecha de la reserva
+
+        if (newStartDate.isBefore(LocalDate.now())) {
+            throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
+        }
+
+        LocalDateTime localDateTime = LocalDateTime.of(newStartDate, newStartTime);
+
+        if (localDateTime.isBefore(LocalDateTime.now(ZoneId.of("America/Lima")))) {
+            throw new RuntimeException("La fecha y la Hora de la reserva no debe ser menor a la actual");
+        }
+
+        if (newStartTime.isBefore(LocalTime.parse("14:00:00"))) {
+            throw new RuntimeException("El restaurante aun no esta abierto");
+        }
+        if (newStartTime.isAfter(LocalTime.parse("23:00:00"))) {
+            throw new RuntimeException("El restaurante ya esta cerrado");
+        }
+        LocalTime newEndtime = newStartTime.plusHours(2);
+
+        List<ReservationTable> mesas = reservation.getReservationTables();
+
+        for (ReservationTable reservationTable : mesas) {
+            ResTable mesa = reservationTable.getResTable();
+            if (mesa == null) {
+                throw new RuntimeException("Mesa no existe.");
+            }
+            // Verificar si la mesa está ocupada en las nuevas fecha y hora
+            if (!isTableAvailable(mesa.getId(), newStartDate, newStartTime, newEndtime)) {
+                throw new IllegalArgumentException("Mesa ocupada.");
+
+            }
+        }
+        reservation.setDate(newStartDate);
+        reservation.setStartTime(newStartTime);
+        reservation.setEndTime(newEndtime);
+
+        return reservationMapper.convertToDTO(reservationRespository.save(reservation));
     }
 }
