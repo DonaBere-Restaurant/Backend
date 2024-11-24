@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 @Service
 public class IzipayServiceImpl implements IzipayService {
@@ -18,7 +20,7 @@ public class IzipayServiceImpl implements IzipayService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public String createOrder(Integer amount, String userEmail, String successUrl, String cancelUrl) {
+    public IzipayOrderResponseDTO createOrder(Integer amount, String userEmail, String successUrl, String cancelUrl) {
         String url = "https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePaymentOrder";
 
         ChannelOptionsDTO options = new ChannelOptionsDTO();
@@ -50,7 +52,7 @@ public class IzipayServiceImpl implements IzipayService {
         IzipayOrderResponseDTO responseBody = response.getBody();
 
         if (responseBody != null && responseBody.getAnswer().getPaymentURL() != null) {
-            return responseBody.getAnswer().getPaymentURL();
+            return responseBody;
         } else {
             throw new RuntimeException("Respuesta vacía o inválida del servidor");
         }
@@ -64,16 +66,21 @@ public class IzipayServiceImpl implements IzipayService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBasicAuth("70951026", "testpassword_ZyKMVTldVmnCuKHzHG2SN7OpeNW1YShyE10GwWsmmDbd1");
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(orderId, headers);
+        // Construir el cuerpo como JSON
+        Map<String, String> body = new HashMap<>();
+        body.put("orderId", orderId);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
         ResponseEntity<IzipayOrderStatusResponseDTO> response = restTemplate.exchange(
                 url, HttpMethod.POST, requestEntity, IzipayOrderStatusResponseDTO.class
         );
 
         IzipayOrderStatusResponseDTO responseBody = response.getBody();
+        System.out.println(responseBody);
 
         if (responseBody != null) {
-            return "SUCCESS".equalsIgnoreCase(responseBody.getStatus());
+            return "SUCCESS".equals(responseBody.getStatus());
         } else {
             throw new RuntimeException("Respuesta vacía del servidor");
         }

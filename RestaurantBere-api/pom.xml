@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hampcode.restaurant_reservation</groupId>
-    <artifactId>RestaurantBere-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>RestaurantBere-api</name>
-    <description>RestaurantBere-api</description>
+    <artifactId>Bere-api</artifactId>
+    <version>0.0.1</version>
+    <name>Bere-api</name>
+    <description>Bere-api</description>
     <url/>
     <licenses>
         <license/>

@@ -21,7 +21,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/customer")
 @AllArgsConstructor
-@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;
@@ -44,17 +43,4 @@ public class CustomerController {
             return new ResponseEntity<>(customer, HttpStatus.OK);
         }
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponseDTO> updateCustomer(@PathVariable int id, @RequestBody CustomerRequestDTO customerRequestDTO) {
-        CustomerResponseDTO customer = customerServiceimpl.updateCustomer(id, customerRequestDTO);
-        return new ResponseEntity<>(customer, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
-        customerServiceimpl.deleteCustomer(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

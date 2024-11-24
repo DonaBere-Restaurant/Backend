@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,9 +65,27 @@ public class ReservationServiceImpl implements ReservationService {
         {
             throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
         }
-        if((reservation.getStartTime()).isBefore(LocalTime.now()))
+        LocalDateTime localDateTime = LocalDateTime.of(
+                reservation.getDate(),
+                reservation.getStartTime()
+        );
+
+        if(localDateTime.isBefore(LocalDateTime.now(ZoneId.of("America/Lima"))))
         {
-            throw new RuntimeException("La Hora de la reserva no debe ser menor a la actual");
+            throw new RuntimeException("La fecha y la Hora de la reserva no debe ser menor a la actual");
+        }
+
+        if(reservation.getStartTime().isBefore(LocalTime.parse("14:00:00")))
+        {
+            throw new RuntimeException("El restaurante aun no esta abierto");
+        }
+        if(reservation.getStartTime().isAfter(LocalTime.parse("21:00:00")))
+        {
+            throw new RuntimeException("No puedes reservar el restaurante cerrara en menos de 2 horas");
+        }
+        if(reservation.getStartTime().isAfter(LocalTime.parse("23:00:00")))
+        {
+            throw new RuntimeException("El restaurante ya esta cerrada");
         }
         reservation.setEndTime(endTime);
         reservation.setCreatedTime(LocalDateTime.now());
@@ -216,6 +235,10 @@ public class ReservationServiceImpl implements ReservationService {
 
         // Buscar reservas creadas en el día actual
         List<Reservation> reservations = reservationRespository.findAllByCreatedTimeBetween(startOfDay, endOfDay);
+        if(reservations==null)
+        {
+            throw new ResourceNotFoundException("Reserva no encontrada");
+        }
         for (Reservation reservation : reservations) {
             freeOccupiedTables(reservation.getId());
         }

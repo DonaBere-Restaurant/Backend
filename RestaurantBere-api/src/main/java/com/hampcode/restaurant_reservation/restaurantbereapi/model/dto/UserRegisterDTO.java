@@ -10,6 +10,8 @@ public class UserRegisterDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
+    @NotBlank(message = "El apellido es obligatorio")
+    private String lastname;
 
     @NotBlank(message = "El DNI es obligatorio")
     private String dni;
