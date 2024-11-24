@@ -31,4 +31,5 @@ public interface ReservationService {
     public List<CustomReservationResponseDTO> getAllReservationsC();
     public void changeRefoundStatus(int reservationId);
     public List<ReservationResponseDTO> getPayedReservations();
+    public ReservationResponseDTO updateDateReservation(int reservationId,int customerId, LocalDate startDate, LocalTime startTime);
 }
