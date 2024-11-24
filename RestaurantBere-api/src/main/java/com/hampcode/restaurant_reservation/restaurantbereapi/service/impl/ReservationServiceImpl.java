@@ -376,4 +376,14 @@ public class ReservationServiceImpl implements ReservationService {
     public List<Reservation> getReservationsByCustomer(int customerId) {
         return reservationRespository.findByCustomerId(customerId);
     }
+
+    public List<CustomReservationResponseDTO> getAllReservationsC() {
+        // Obtener todas las reservas desde el repositorio
+        List<Reservation> reservations = reservationRespository.findAll();
+
+        // Convertir las reservas a CustomReservationResponseDTO
+        return reservations.stream()
+                .map(reservationMapper::convertToCustomDTO)  // Mapea cada reserva a CustomReservationResponseDTO
+                .collect(Collectors.toList());
+    }
 }

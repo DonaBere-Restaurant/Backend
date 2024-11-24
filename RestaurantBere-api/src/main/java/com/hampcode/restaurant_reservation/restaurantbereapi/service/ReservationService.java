@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ResTable;
@@ -27,5 +28,6 @@ public interface ReservationService {
     public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime);
     public String cancelReservation(int id);
     List<Reservation> getReservationsByCustomer(int customerId);
+    public List<CustomReservationResponseDTO> getAllReservationsC();
 
 }
