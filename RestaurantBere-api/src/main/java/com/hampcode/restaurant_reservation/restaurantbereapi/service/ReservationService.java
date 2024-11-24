@@ -29,5 +29,6 @@ public interface ReservationService {
     public String cancelReservation(int id);
     List<Reservation> getReservationsByCustomer(int customerId);
     public List<CustomReservationResponseDTO> getAllReservationsC();
-
+    public void changeRefoundStatus(int reservationId);
+    public List<ReservationResponseDTO> getPayedReservations();
 }

@@ -78,7 +78,7 @@ public class IzipayController {
 
         // Configuración de URLs de éxito y cancelación
         String successUrl = String.format(
-                "https://bere-api.onrender.com/api/v1/izipay/pay-reservation/success?reserva=%d",
+                "http://localhost:8080/api/v1/izipay/pay-reservation/success?reserva=%d",
                 reservationId
         );
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";

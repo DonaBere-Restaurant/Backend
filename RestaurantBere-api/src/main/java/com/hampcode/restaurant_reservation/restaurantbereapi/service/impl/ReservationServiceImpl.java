@@ -386,4 +386,32 @@ public class ReservationServiceImpl implements ReservationService {
                 .map(reservationMapper::convertToCustomDTO)  // Mapea cada reserva a CustomReservationResponseDTO
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void changeRefoundStatus(int reservationId) {
+        Reservation reservation = reservationRespository.findById(reservationId).orElse(null);
+        if (reservation == null) {
+            throw new EntityNotFoundException("Reserva no encontrada");
+        }
+        if(reservation.getRefoundstatus())
+        {
+            throw new IllegalArgumentException("La reserva ya se ha marcado como rembolsado");
+        }
+        if(!reservation.getPaymentstatus())
+        {
+            throw new IllegalArgumentException("La reserva aun no ha sido pagada");
+        }
+        LocalDateTime createdTime = reservation.getCreatedTime();
+
+        if (createdTime.plusHours(24).isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La reserva no puede marcarse como reembolsada ya que han pasado más de 24 horas");
+        }
+            reservation.setRefoundstatus(true);
+            reservationRespository.save(reservation);
+    }
+
+    @Override
+    public List<ReservationResponseDTO> getPayedReservations() {
+        return reservationMapper.convertToListDTO(reservationRespository.findByPaymentstatusTrue());
+    }
 }
