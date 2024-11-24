@@ -54,10 +54,21 @@ public class DishServiceImpl implements DishService {
 
     @Transactional
     public DishResponseDTO updateDish(int id, DishRequestDTO dishRequestDTO) {
-        Dish dish = dishRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Plato no encontrado con el numero:"+id));
-        if(dishRequestDTO.getTitle() != null)dish.setTitle(dishRequestDTO.getTitle());
-        if(dishRequestDTO.getDescription() != null)dish.setDescription(dishRequestDTO.getDescription());
-        if(dishRequestDTO.getPrice() != 0)dish.setPrice(dishRequestDTO.getPrice());
+        Dish dish = dishRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado con el numero:" + id));
+
+        if (dishRequestDTO.getTitle() != null) dish.setTitle(dishRequestDTO.getTitle());
+        if (dishRequestDTO.getDescription() != null) dish.setDescription(dishRequestDTO.getDescription());
+        if (dishRequestDTO.getPrice() != 0) dish.setPrice(dishRequestDTO.getPrice());
+
+        if (dishRequestDTO.getImage() != null) {
+            try {
+                String imagePath = uploadFileService.copy(dishRequestDTO.getImage());
+                dish.setImage(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
+            }
+        }
 
         dish = dishRepository.save(dish);
 

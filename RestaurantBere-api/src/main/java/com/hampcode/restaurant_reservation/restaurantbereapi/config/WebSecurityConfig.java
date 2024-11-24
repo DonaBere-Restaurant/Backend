@@ -47,7 +47,7 @@ public class WebSecurityConfig {
                         // TODO: Permitir acceso público a las rutas de login, registro y endpoints públicos como Swagger UI
                         .requestMatchers(antMatcher("/auth/login")).permitAll()
                         .requestMatchers(antMatcher("/auth/register/customer")).permitAll()
-                            .requestMatchers(antMatcher("/user/profile/**")).permitAll()
+                        .requestMatchers(antMatcher("/user/profile/**")).permitAll()
                         .requestMatchers(antMatcher("/reservasion/dia/mesas/menu")).permitAll()
                         .requestMatchers(antMatcher("/reservasion/dia/mesas/menu/datos/pay-reservation/**")).permitAll()
                         .requestMatchers(antMatcher("/izipay/pay-reservation/**")).permitAll()
