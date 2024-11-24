@@ -9,6 +9,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.Reservation
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.ReservationConfirmationImpl;
 import com.paypal.http.HttpResponse;
 import com.paypal.orders.Order;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,17 +30,9 @@ public class PaypalController {
     public ReservationService reservationService;
     @Autowired
     public ReservationMapper reservationMapper;
-    public ReservationResponseDTO reservationResponseDTO;
     @Autowired
     private ReservationConfirmationImpl reservationConfirmationImpl;
 
-    String[] bccRecipients = {"restaurantbere@gmail.com",
-            "jpalominoc5@upao.edu.pe",
-            "jaguilarb3@upao.edu.pe",
-            "opadillar1@upao.edu.pe",
-            "gguevarav2@upao.edu.pe",
-            "dacevedov1@upao.edu.pe"
-    };
     @Autowired
     private ReservationRespository reservationRespository;
 
@@ -112,7 +103,7 @@ public class PaypalController {
     }
 
     @GetMapping("/pay-reservation/success")
-    public void handlePaymentSuccess(@RequestParam("token") String token,@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException {
+    public void handlePaymentSuccess(@RequestParam("token") String token,@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException, MessagingException {
         boolean successPayment = false;
         Reservation reservation = reservationService.findReservationById(idReserva);
         try {
@@ -139,8 +130,10 @@ public class PaypalController {
         if (successPayment) {
             String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
-            reservation = reservationRespository.findByPaymentToken(token); // encuentra la reserva por token
-            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservation); // envía el correo
+
+            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
+            String emailUser = reservationResponseDTO.getEmail();
+            reservationConfirmationImpl.sendReservationEmail(reservationResponseDTO, emailUser);
 
             // Redirigir a una URL del frontend
 
