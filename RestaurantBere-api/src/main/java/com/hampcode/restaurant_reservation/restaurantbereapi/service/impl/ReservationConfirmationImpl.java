@@ -1,8 +1,10 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.OrderMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.OrderRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.EmailService;
@@ -30,9 +32,11 @@ public class ReservationConfirmationImpl implements ReservationConfirmation {
     private UserRepository userRepository;
     @Autowired
     private OrderMapper orderMapper;
-
+    @Autowired
+    private ReservationMapper reservationMapper;
     @Override
-    public void sendReservationEmail(String[] bccRecipients, ReservationResponseDTO reservationResponseDTO) {
+    public void sendReservationEmail(String[] bccRecipients, Reservation reserva) {
+        ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
         SimpleMailMessage message = new SimpleMailMessage();
         User user = userRepository.findById(reservationResponseDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
         message.setTo(user.getEmail());

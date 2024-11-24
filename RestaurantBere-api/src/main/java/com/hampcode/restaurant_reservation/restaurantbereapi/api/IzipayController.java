@@ -78,7 +78,7 @@ public class IzipayController {
 
         // Configuración de URLs de éxito y cancelación
         String successUrl = String.format(
-                "http://localhost:8080/api/v1/izipay/pay-reservation/success?reserva=%d",
+                "https://bere-api.onrender.com/api/v1/izipay/pay-reservation/success?reserva=%d",
                 reservationId
         );
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
@@ -116,8 +116,7 @@ public class IzipayController {
     }
 
     @GetMapping("/pay-reservation/success")
-    public void handlePaymentSuccess(@RequestParam("reserva") Integer idReserva,
-                                     HttpServletResponse response) throws IOException {
+    public void handlePaymentSuccess(@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException {
         Reservation reserva = reservationService.findReservationById(idReserva);
         if (reserva == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Reserva no encontrada.");
@@ -137,10 +136,11 @@ public class IzipayController {
         try {
 
             String orderId = reserva.getPaymentToken();
+
             boolean isPaid = izipayService.orderStatus(orderId);
 
             if (isPaid) {
-                reservationService.updatePaymentStatus(reserva.getPaymentToken(), true);
+                reservationService.updatePaymentStatus(orderId, true);
                 successPayment = true;
             } else {
                 // Si el pago no fue exitoso, eliminamos el `paymentToken`
@@ -157,9 +157,9 @@ public class IzipayController {
 
         if (successPayment) {
             // Enviar correo de confirmación
-            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
-            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservationResponseDTO);
-
+            //ReservationResponseDTO reservationResponseDTO =reservationService.getReservationById(idReserva);
+            //System.out.println(reservationResponseDTO);
+            //reservationConfirmationImpl.sendReservationEmail(bccRecipients, reserva);
             // Redirigir al frontend en caso de éxito
             String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado";
             response.sendRedirect(redirectUrl);
