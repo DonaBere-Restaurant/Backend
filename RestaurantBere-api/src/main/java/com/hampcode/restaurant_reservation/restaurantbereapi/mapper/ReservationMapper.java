@@ -1,9 +1,7 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.mapper;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationDishesRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationTablesRequestDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
@@ -62,5 +60,27 @@ public class ReservationMapper {
         return reservations.stream()
                 .map(this::convertToDTO)
                 .toList();
+    }
+
+    public CustomReservationResponseDTO convertToCustomDTO(Reservation reservation) {
+        CustomReservationResponseDTO customDTO = new CustomReservationResponseDTO();
+
+        // Mapear los campos directamente desde la entidad
+        customDTO.setId(reservation.getId());
+        customDTO.setDate(reservation.getDate());
+        customDTO.setStartTime(reservation.getStartTime());
+        customDTO.setEndTime(reservation.getEndTime());
+        customDTO.setGuestNumber(reservation.getGuestNumber());
+        customDTO.setPriceTotal(reservation.getPriceTotal());
+        customDTO.setStatus(reservation.getStatus());
+
+        Customer customer = reservation.getCustomer().getCustomer();
+
+        customDTO.setName(customer.getName());
+
+        // Asignar las mesas si existen
+        customDTO.setTables(reservation.getReservationTables());
+
+        return customDTO;
     }
 }

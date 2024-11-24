@@ -6,10 +6,15 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
+import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -40,6 +45,12 @@ public class ReservationController {
     UserService userService;
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private ReservationMapper reservationMapper;
 
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
@@ -213,6 +224,80 @@ public class ReservationController {
         } else {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);  // Si algo sale mal, devuelve BAD_REQUEST
         }
+    }
+
+    @GetMapping("/my-reservations")
+    public ResponseEntity<List<CustomReservationResponseDTO>> getMyCustomReservations() {
+        // Obtener ID del usuario autenticado desde el JWT
+        Integer userId = getAuthenticatedUserIdFromJWT();
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);  // Si no hay usuario autenticado
+        }
+
+        // Buscar el usuario
+        User authenticatedUser = userRepository.findById(userId).orElse(null);
+
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // Si el usuario no existe
+        }
+
+        // Obtener las reservas del usuario autenticado
+        List<Reservation> reservations = reservationService.getReservationsByCustomer(userId);
+
+        // Mapear las reservas a CustomReservationResponseDTO
+        List<CustomReservationResponseDTO> customResponse = reservations.stream()
+                .map(reservationMapper::convertToCustomDTO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+    }
+
+    public Integer getAuthenticatedUserIdFromJWT() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String token = (String) authentication.getCredentials(); // Obtén el token desde la autenticación
+
+            // Extraer el email del token
+            Claims claims = tokenProvider.getJwtParser().parseClaimsJws(token).getBody();
+            String email = claims.getSubject();
+
+            // Buscar el usuario usando el email
+            User user = userRepository.findByEmail(email).orElse(null);
+            return user != null ? user.getId() : null;  // Si el usuario existe, devuelve su ID
+        }
+        return null; // Si no hay autenticación, devuelve null
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app/, http://localhost:4200"})
+    @GetMapping("/all-reservations")
+    public ResponseEntity<List<CustomReservationResponseDTO>> getAllReservationsC() {
+        // Obtener el ID del usuario autenticado desde el JWT
+        Integer userId = getAuthenticatedUserIdFromJWT();
+
+        // Verificar si el usuario está autenticado
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);  // Si no hay usuario autenticado
+        }
+
+        // Buscar el usuario autenticado
+        User authenticatedUser = userRepository.findById(userId).orElse(null);
+
+        // Verificar si el usuario tiene un Customer asociado
+        //if (authenticatedUser.getRole().getName() = "ROLE_ADMIN") {
+        List<CustomReservationResponseDTO> reservations = reservationService.getAllReservationsC();
+
+        // Verificar si las reservas están vacías
+        if (reservations.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);  // Si no hay reservas, devolver 204 No Content
+        }
+
+        // Retornar las reservas en formato DTO
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
+        //} else {
+        // return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);  // Si el usuario es un Customer, devolver 403 Forbidden
     }
 
 }
