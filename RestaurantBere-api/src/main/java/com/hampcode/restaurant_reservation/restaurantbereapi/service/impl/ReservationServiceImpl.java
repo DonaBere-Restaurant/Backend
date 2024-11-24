@@ -6,12 +6,16 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationT
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.*;
+import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ResTableService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
+import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +48,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ReservationMapper rMapper;
 
+    @Autowired
+    private TokenProvider tokenProvider;
+
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
         List<Reservation> reservations = reservationRespository.findAll();
@@ -61,37 +68,52 @@ public class ReservationServiceImpl implements ReservationService {
         LocalTime startTime = reservationRequestDTO.getStartTime();
         LocalTime endTime = startTime.plusHours(2);
         Reservation reservation = reservationMapper.convertToEntity(reservationRequestDTO);
-        if((reservation.getDate()).isBefore(LocalDate.now()))
-        {
+
+        // Validar la fecha de la reserva
+        if (reservation.getDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
         }
-        LocalDateTime localDateTime = LocalDateTime.of(
-                reservation.getDate(),
-                reservation.getStartTime()
-        );
 
-        if(localDateTime.isBefore(LocalDateTime.now(ZoneId.of("America/Lima"))))
-        {
+        LocalDateTime localDateTime = LocalDateTime.of(reservation.getDate(), reservation.getStartTime());
+
+        // Verificar si la fecha y hora son válidas
+        if (localDateTime.isBefore(LocalDateTime.now(ZoneId.of("America/Lima")))) {
             throw new RuntimeException("La fecha y la Hora de la reserva no debe ser menor a la actual");
         }
 
-        if(reservation.getStartTime().isBefore(LocalTime.parse("14:00:00")))
-        {
+        // Verificar si la hora de la reserva está dentro de los horarios permitidos
+        if (reservation.getStartTime().isBefore(LocalTime.parse("14:00:00"))) {
             throw new RuntimeException("El restaurante aun no esta abierto");
         }
-        if(reservation.getStartTime().isAfter(LocalTime.parse("21:00:00")))
-        {
-            throw new RuntimeException("No puedes reservar el restaurante cerrara en menos de 2 horas");
-        }
-        if(reservation.getStartTime().isAfter(LocalTime.parse("23:00:00")))
-        {
+        if (reservation.getStartTime().isAfter(LocalTime.parse("23:00:00"))) {
             throw new RuntimeException("El restaurante ya esta cerrada");
         }
+
+        // Obtener el ID del usuario desde el JWT
+        Integer userId = getAuthenticatedUserIdFromJWT();
+
+        if (userId == null) {
+            throw new RuntimeException("Usuario no autenticado");
+        }
+
+        // Buscar el cliente (Customer) asociado al usuario autenticado
+        User authenticatedUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Asignar el cliente al objeto reserva
+        reservation.setCustomer(authenticatedUser);
+
+        // Establecer la hora de finalización de la reserva
         reservation.setEndTime(endTime);
         reservation.setCreatedTime(LocalDateTime.now());
+        reservation.setStatus(0);
+        // Guardar la reserva en la base de datos
         reservationRespository.save(reservation);
+
+        // Convertir la entidad de reserva a DTO para la respuesta
         return reservationMapper.convertToDTO(reservation);
     }
+
     @Override
     public Reservation findReservationById(int id) {
     return reservationRespository.findById(id).orElse(null);
@@ -291,4 +313,22 @@ public class ReservationServiceImpl implements ReservationService {
     public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime) {
         return reservationRespository.findAvailableTables(date, startTime, endTime);
     }
+
+    public Integer getAuthenticatedUserIdFromJWT() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String token = (String) authentication.getCredentials(); // Obtén el token desde la autenticación
+
+            // Extraer el email del token
+            Claims claims = tokenProvider.getJwtParser().parseClaimsJws(token).getBody();
+            String email = claims.getSubject();
+
+            // Buscar el usuario usando el email
+            User user = userRepository.findByEmail(email).orElse(null);
+            return user != null ? user.getId() : null;  // Si el usuario existe, devuelve su ID
+        }
+        return null; // Si no hay autenticación, devuelve null
+    }
+
 }

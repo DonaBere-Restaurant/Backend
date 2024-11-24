@@ -61,6 +61,9 @@ public class Reservation {
     @Column (name = "res_tok_vc")
     private String paymentToken;
 
+    @Column(name = "res_sta_int")
+    private int status; // 0: Reservado, 1: En Finalizado, 2: Cancelado
+
     public boolean getPaymentstatus() {
         return paymentstatus;
     }
