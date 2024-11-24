@@ -58,7 +58,7 @@ public class DishController {
     }
 
     @PutMapping("admin/menu/{id}")
-    public ResponseEntity<DishResponseDTO> updateDish (@PathVariable int id, @RequestBody DishRequestDTO dishRequestDTO){
+    public ResponseEntity<DishResponseDTO> updateDish (@PathVariable int id, @ModelAttribute DishRequestDTO dishRequestDTO){
         DishResponseDTO dish = dishServiceImpl.updateDish(id, dishRequestDTO);
         return new ResponseEntity<>(dish, HttpStatus.OK);
     }
