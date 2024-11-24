@@ -29,6 +29,7 @@ public interface ReservationService {
     public String cancelReservation(int id);
     List<Reservation> getReservationsByCustomer(int customerId);
     public List<CustomReservationResponseDTO> getAllReservationsC();
+    public Integer getAuthenticatedUserIdFromJWT();
     public void changeRefoundStatus(int reservationId);
     public List<ReservationResponseDTO> getPayedReservations();
     public ReservationResponseDTO updateDateReservation(int reservationId,int customerId, LocalDate startDate, LocalTime startTime);
