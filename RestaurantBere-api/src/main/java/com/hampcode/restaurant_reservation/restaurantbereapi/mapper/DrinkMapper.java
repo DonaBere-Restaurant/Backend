@@ -19,6 +19,10 @@ public class DrinkMapper {
         return modelMapper.map(drinkRequestDTO, Drink.class);
     }
 
+    public Drink convertToResponseEntity(DrinkResponseDTO drinkResponseDTO){
+        return modelMapper.map(drinkResponseDTO, Drink.class);
+    }
+
     public DrinkResponseDTO convertToDTO(Drink drink){
         return modelMapper.map(drink, DrinkResponseDTO.class);
     }
