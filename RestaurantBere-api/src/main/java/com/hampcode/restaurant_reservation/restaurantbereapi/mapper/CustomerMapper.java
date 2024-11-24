@@ -23,7 +23,13 @@ public class CustomerMapper {
     }
 
     public CustomerResponseDTO convertToDTO(Customer customer) {
-        return modelMapper.map(customer, CustomerResponseDTO.class);
+        CustomerResponseDTO customerResponseDTO = modelMapper.map(customer, CustomerResponseDTO.class);
+        customerResponseDTO.setEmail(customer.getUser().getEmail());
+        if(customer.getAddress() == null)
+        {
+            customerResponseDTO.setAddress("No definida");
+        }
+        return customerResponseDTO;
     }
 
     public List<CustomerResponseDTO> convertToListDTO(List<Customer> customers) {

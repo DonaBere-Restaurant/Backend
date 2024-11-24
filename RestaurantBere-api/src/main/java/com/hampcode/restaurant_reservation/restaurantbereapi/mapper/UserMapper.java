@@ -31,6 +31,7 @@ public class UserMapper {
          UserProfileDTO userProfileDTO = modelMapper.map(user, UserProfileDTO.class);
          if(user.getCustomer() != null){
              userProfileDTO.setName(user.getCustomer().getName());
+             userProfileDTO.setLastname(user.getCustomer().getLastname());
              userProfileDTO.setDni(user.getCustomer().getDni());
              userProfileDTO.setPhone(user.getCustomer().getPhone());
              userProfileDTO.setAddress(user.getCustomer().getAddress());

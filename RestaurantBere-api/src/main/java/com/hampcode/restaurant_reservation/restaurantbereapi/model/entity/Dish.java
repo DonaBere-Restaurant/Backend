@@ -29,7 +29,6 @@ public class Dish {
     @Column(name = "dis_pri_do", nullable = false)
     private double price;
 
-    @Lob
     @Column(name = "dis_img_var")
     private String image;
 }

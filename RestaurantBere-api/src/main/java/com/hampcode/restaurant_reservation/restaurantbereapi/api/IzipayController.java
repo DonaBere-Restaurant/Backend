@@ -36,7 +36,7 @@ public class IzipayController {
     private final ReservationConfirmationImpl reservationConfirmationImpl;
 
     @PostMapping("/create-payment-order")
-    public String createPaymentOrder(@RequestParam Integer totalAmount) {
+    public IzipayOrderResponseDTO createPaymentOrder(@RequestParam Integer totalAmount) {
        UserProfileDTO userProfileDTO = userService.getCustomerProfileById(userService.getAuthenticatedUserIdFromJWT());
         String successUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/pay-reservation/success";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
@@ -68,34 +68,45 @@ public class IzipayController {
             throw new RuntimeException("Respuesta vacía del servidor");
         }
     }
+
     @GetMapping("/pay-reservation/{reservationId}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationId) {
-        Reservation reservation = reservationService.findReservationById(reservationId);
-
+        ReservationResponseDTO reservation = reservationService.getReservationById(reservationId);
         if (reservation == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Reservación no existente"));
         }
 
         // Configuración de URLs de éxito y cancelación
-        String successUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/pay-reservation/success";
+        String successUrl = String.format(
+                "http://localhost:8080/api/v1/izipay/pay-reservation/success?reserva=%d",
+                reservationId
+        );
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
-        Integer totalPrice= (int)(reservation.getPriceTotal()*100); //Nota se multiplica por 100 ya que el izipay recibe la moneda en centimos
+        Integer totalPrice = (int) (reservation.getPriceTotal() * 100); // Convertir a céntimos para Izipay
+
         try {
             // Crear la orden en Izipay
-            String paymentUrl = izipayService.createOrder(
+            IzipayOrderResponseDTO paymentResponse = izipayService.createOrder(
                     totalPrice,
-                    reservation.getCustomer().getEmail(), // Email del usuario asociado a la reserva
+                    reservation.getEmail(), // Email del usuario asociado a la reserva
                     successUrl,
                     cancelUrl
             );
 
-            // Almacenar el token o URL en la reserva
-            reservation.setPaymentToken(paymentUrl);
-            reservationService.updateReservation(reservation.getId(), reservationMapper.convertToRequestDTO(reservation));
+            // Guardar el `orderId` en la reserva
+            String orderId = paymentResponse.getAnswer().getOrderId();
+
+            Reservation reservation1 = reservationRespository.findById(reservationId).orElse(null);
+            if (reservation1 == null) {
+                throw new IllegalStateException("Reserva no encontrada");
+            }
+            System.out.println(orderId);
+            reservation1.setPaymentToken(orderId);
+            reservationRespository.save(reservation1);
 
             // Devolver la URL de pago de Izipay
             Map<String, String> response = new HashMap<>();
-            response.put("approvalUrl", paymentUrl);
+            response.put("approvalUrl", paymentResponse.getAnswer().getPaymentURL());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,28 +116,39 @@ public class IzipayController {
     }
 
     @GetMapping("/pay-reservation/success")
-    public void handlePaymentSuccess(@RequestParam("orderId") String orderId, HttpServletResponse response) throws IOException, IOException {
+    public void handlePaymentSuccess(@RequestParam("reserva") Integer idReserva,
+                                     HttpServletResponse response) throws IOException {
+        Reservation reserva = reservationService.findReservationById(idReserva);
+        if (reserva == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Reserva no encontrada.");
+            return;
+        }
+
         boolean successPayment = false;
-        Reservation reservation;
-        String[] bccRecipients = {"restaurantbere@gmail.com",
+        String[] bccRecipients = {
+                "restaurantbere@gmail.com",
                 "jpalominoc5@upao.edu.pe",
                 "jaguilarb3@upao.edu.pe",
                 "opadillar1@upao.edu.pe",
                 "gguevarav2@upao.edu.pe",
                 "dacevedov1@upao.edu.pe"
         };
+
         try {
-            // Consultar el estado de la orden en Izipay
+
+            String orderId = reserva.getPaymentToken();
             boolean isPaid = izipayService.orderStatus(orderId);
 
             if (isPaid) {
-                // Marcar la reserva como pagada en la base de datos
-                reservationService.updatePaymentStatus(orderId, true);
+                reservationService.updatePaymentStatus(reserva.getPaymentToken(), true);
                 successPayment = true;
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El pago no fue exitoso.");
-                return;
+                // Si el pago no fue exitoso, eliminamos el `paymentToken`
+                reserva.setPaymentToken(null);
+                reserva.setPaymentstatus(false);
+                reservationRespository.save(reserva);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error procesando el pago.");
@@ -134,18 +156,16 @@ public class IzipayController {
         }
 
         if (successPayment) {
-            reservation = reservationRespository.findByPaymentToken(orderId);
-            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
-            reservationConfirmationImpl.sendReservationEmail(
-                    bccRecipients,
-                    reservationResponseDTO
-            );
+            // Enviar correo de confirmación
+            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
+            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservationResponseDTO);
 
-            // Redirigir al frontend
+            // Redirigir al frontend en caso de éxito
             String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado";
             response.sendRedirect(redirectUrl);
         } else {
-            response.getWriter().write("Pago completado con éxito.");
+            // Respuesta para pagos no exitosos
+            response.getWriter().write("El pago no fue completado.");
         }
     }
 

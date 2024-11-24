@@ -22,6 +22,8 @@ public class Customer {
 
     @Column(name = "cus_name", nullable = false)
     private String name;
+    @Column(name = "cus_last_name_vc", nullable = false)
+    private String lastname;
 
     @Column(name = "cus_dni_vc", nullable = false)
     private String dni;
@@ -29,7 +31,7 @@ public class Customer {
     @Column(name = "cus_pho_in")
     private String phone;
 
-    @Column(name = "cus_add_vc")
+    @Column(name = "cus_add_vc", nullable = true)
     private String address;
 
     @Column(name = "cus_regis_date_dt", nullable = false)
