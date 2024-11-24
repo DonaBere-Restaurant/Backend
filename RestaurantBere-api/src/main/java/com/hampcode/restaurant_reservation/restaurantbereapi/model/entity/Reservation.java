@@ -64,7 +64,12 @@ public class Reservation {
     @Column(name = "res_sta_int")
     private int status; // 0: Reservado, 1: En Finalizado, 2: Cancelado
 
+    @Column(name = "res_ref_sta_bo",nullable = true)
+    private boolean refoundstatus = false;
+
     public boolean getPaymentstatus() {
         return paymentstatus;
     }
+
+    public boolean getRefoundstatus() {return refoundstatus;}
 }

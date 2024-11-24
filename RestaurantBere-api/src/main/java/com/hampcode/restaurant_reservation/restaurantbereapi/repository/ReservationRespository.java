@@ -33,4 +33,6 @@ public interface ReservationRespository extends JpaRepository<Reservation, Integ
                                        @Param("startTime") LocalTime startTime,
                                        @Param("endTime") LocalTime endTime);
     List<Reservation> findByCustomerId(int customerId);
+
+    List<Reservation> findByPaymentstatusTrue();
 }
