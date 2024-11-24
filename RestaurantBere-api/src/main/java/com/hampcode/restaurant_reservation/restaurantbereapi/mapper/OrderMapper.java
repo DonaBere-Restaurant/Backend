@@ -14,8 +14,10 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class OrderMapper {
+
     private final ModelMapper modelMapper;
     private final DishMapper dishMapper;
+
     public OrderResponseDTO toOrderResponseDTO(Order order) {
         OrderResponseDTO orderResponseDTO = modelMapper.map(order, OrderResponseDTO.class);
         orderResponseDTO.setQuantity(order.getQuantity());
@@ -23,6 +25,7 @@ public class OrderMapper {
 
         return orderResponseDTO;
     }
+
     public List<OrderResponseDTO> toOrderResponseDTO(List<Order> orders) {
         return orders.stream()
                 .map(this::toOrderResponseDTO)
@@ -32,6 +35,7 @@ public class OrderMapper {
     public Order toOrder(OrderResponseDTO orderResponseDTO) {
         return modelMapper.map(orderResponseDTO, Order.class);
     }
+
     public List<Order> toOrders(List<OrderResponseDTO> orderResponseDTOs) {
         return orderResponseDTOs.stream()
                 .map(this::toOrder)

@@ -1,6 +1,5 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.exception.TableNotAvailableException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
@@ -29,22 +28,31 @@ import java.util.stream.Collectors;
 @RequestMapping("/reservasion")
 @CrossOrigin(origins = "https://restaurantbere-52059.web.app, http://localhost:4200")
 public class ReservationController {
+
     @Autowired
     ReservationService reservationService;
+
     @Autowired
     ResTableService resTableService;
+
     @Autowired
     ReservationMapper mapper;
+
     @Autowired
     ResTableMapper resTableMapper;
+
     @Autowired
     DishService dishService;
+
     @Autowired
     DishMapper dishMapper;
+
     @Autowired
     UserRepository userRepository;
+
     @Autowired
     UserService userService;
+
     @Autowired
     UserMapper userMapper;
 
@@ -53,6 +61,12 @@ public class ReservationController {
 
     @Autowired
     private ReservationMapper reservationMapper;
+
+    @Autowired
+    DrinkService drinkService;
+
+    @Autowired
+    DrinkMapper drinkMapper;
 
     @PostMapping("/dia")
     public ReservationResponseDTO reservationday(@RequestBody ReservationRequestDTO reservationRequestDTO)
@@ -137,7 +151,6 @@ public class ReservationController {
                     .body("Error al actualizar mesas: " + e.getMessage());
         }
 
-
         try {
             reservationService.updateReservation(reservation.getId(), mapper.convertToRequestDTO(reservation));
         } catch (Exception e) {
@@ -183,9 +196,7 @@ public class ReservationController {
                 return ResponseEntity.unprocessableEntity().body("El plato con ID " + dishId + " no existe.");
             }
 
-
             OrderDishId orderDishId = new OrderDishId(dishId, existingReservation.getId());
-
 
             Order order = new Order();
             order.setId(orderDishId);
@@ -195,7 +206,6 @@ public class ReservationController {
             totalPagar = (dish.getPrice()*quantity)+totalPagar;
         }
 
-
         existingReservation.setPriceTotal(totalPagar);
         existingReservation.setOrderDishes(platos);
 
@@ -203,6 +213,54 @@ public class ReservationController {
 
         ReservationResponseDTO responseDTO = mapper.convertToDTO(existingReservation);
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/dia/mesas/menu/bebidas")
+    public ResponseEntity<?> reservationMenuDrinks(@RequestBody ReservationDrinksRequestDTO reservationDrinksRequestDTO) {
+
+        Reservation existingReservation = reservationService.findReservationById(reservationDrinksRequestDTO.getId());
+        if (existingReservation == null) {
+            return ResponseEntity.badRequest().body("La reserva con ID " + reservationDrinksRequestDTO.getId() + " no existe.");
+        }
+
+        double totalPagar = 0;
+
+        if (reservationDrinksRequestDTO.getOrderDrinks() == null || reservationDrinksRequestDTO.getOrderDrinks().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se han seleccionado bebidas para la reserva.");
+        }
+
+        List<OrderDrink> bebidas = new ArrayList<>();
+
+        for (OrderDrinkRequestDTO orderDrinkDTO : reservationDrinksRequestDTO.getOrderDrinks()) {
+            if (orderDrinkDTO.getDrinkId() == null) {
+                return ResponseEntity.badRequest().body("El ID de la bebida no puede ser nulo.");
+            }
+
+            Integer drinkId = orderDrinkDTO.getDrinkId();
+            Integer quantity = orderDrinkDTO.getQuantity();
+
+            Drink drink = drinkMapper.convertToResponseEntity(drinkService.getDrinkById(drinkId));
+
+            if (drink == null) {
+                return ResponseEntity.unprocessableEntity().body("La bebida con ID " + drinkId + " no existe.");
+            }
+
+            OrderDrinkId orderDrinkid = new OrderDrinkId(drinkId, existingReservation.getId());
+
+            OrderDrink orderDrink = new OrderDrink();
+            orderDrink.setId(orderDrinkid);
+            orderDrink.setDrink(drink);
+            orderDrink.setQuantity(quantity);
+            bebidas.add(orderDrink);
+            totalPagar = (drink.getPrice()*quantity)+totalPagar;
+        }
+
+        existingReservation.setPriceTotal(existingReservation.getPriceTotal() + totalPagar);
+        existingReservation.setOrderDrinks(bebidas);
+
+        existingReservation = mapper.convertToEntity(reservationService.updateReservation(existingReservation.getId(), mapper.convertToRequestDTO(existingReservation)));
+        ReservationResponseDTO responseDTO = mapper.convertToDTO(existingReservation);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @GetMapping

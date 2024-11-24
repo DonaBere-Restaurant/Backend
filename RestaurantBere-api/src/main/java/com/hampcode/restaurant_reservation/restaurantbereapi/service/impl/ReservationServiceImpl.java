@@ -38,21 +38,30 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Autowired
     private final ReservationMapper reservationMapper;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private DishRepository dishRepository;
+
     @Autowired
     private ResTableService resTableService;
+
     @Autowired
     private ReservationTablesMapper reservationTablesMapper;
+
     @Autowired
     private ResTableRepository resTableRepository;
+
     @Autowired
     private ReservationMapper rMapper;
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private DrinkRepository drinkRepository;
 
     @Transactional(readOnly = true)
     public List<ReservationResponseDTO> getAllReservations() {
@@ -173,6 +182,30 @@ public class ReservationServiceImpl implements ReservationService {
             // Reemplazar la lista de órdenes en la reserva
             reservation.setOrderDishes(updatedOrders);
         }
+
+        if (reservationRequestDTO.getOrderDrinks() != null) {
+
+            List<OrderDrink> updatedDrinks = new ArrayList<>();
+
+            for (OrderDrinkRequestDTO orderDrinkRequestDTO : reservationRequestDTO.getOrderDrinks()) {
+                Drink drink = drinkRepository.findById(orderDrinkRequestDTO.getDrinkId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Bebida no encontrada con ID: " + orderDrinkRequestDTO.getDrinkId()));
+
+                Integer quantity = orderDrinkRequestDTO.getQuantity();
+
+                OrderDrink newOrderDrink = new OrderDrink();
+                OrderDrinkId orderDrinkId = new OrderDrinkId(orderDrinkRequestDTO.getDrinkId(), reservation.getId());
+
+                newOrderDrink.setId(orderDrinkId);
+                newOrderDrink.setQuantity(quantity);
+                newOrderDrink.setDrink(drink);
+                newOrderDrink.setReservation(reservation);
+
+                updatedDrinks.add(newOrderDrink);
+            }
+            reservation.setOrderDrinks(updatedDrinks);
+        }
+
         //añadir mesas
         if (reservationRequestDTO.getTables() != null) {
             Reservation finalReservation = reservation;

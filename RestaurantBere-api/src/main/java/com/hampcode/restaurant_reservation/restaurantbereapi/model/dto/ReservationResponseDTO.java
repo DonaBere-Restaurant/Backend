@@ -1,6 +1,5 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +25,7 @@ public class ReservationResponseDTO {
     private LocalTime endTime;
     private List<ReservationTable> tables;
     private List<OrderResponseDTO> orderDishes;
+    private List<OrderDrinkResponseDTO> orderDrinks;
     private double priceTotal;
     boolean refoundstatus;
 
