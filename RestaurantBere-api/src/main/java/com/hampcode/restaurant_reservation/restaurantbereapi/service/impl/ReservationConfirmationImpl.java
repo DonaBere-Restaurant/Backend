@@ -1,8 +1,10 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.OrderMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.OrderRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.EmailService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
@@ -26,11 +28,13 @@ public class ReservationConfirmationImpl implements ReservationConfirmation {
     private UserServiceImpl userServiceImpl;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Override
     public void sendReservationEmail(String[] bccRecipients, ReservationResponseDTO reservationResponseDTO) {
         SimpleMailMessage message = new SimpleMailMessage();
-        User user = userRepository.findById(reservationResponseDTO.getCustomer().getId()).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
+        User user = userRepository.findById(reservationResponseDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
         message.setTo(user.getEmail());
         message.setSubject("Confirmación de Reserva");
         message.setText(createEmailBody(reservationResponseDTO));
@@ -48,16 +52,15 @@ public class ReservationConfirmationImpl implements ReservationConfirmation {
     private String createEmailBody(ReservationResponseDTO reservationResponseDTO) {
         StringBuilder emailBody = new StringBuilder();
 
-        emailBody.append("\uD83D\uDC4B Estimado " + reservationResponseDTO.getCustomer().getName() + ",\n\n")
+        emailBody.append("\uD83D\uDC4B Estimado " + reservationResponseDTO.getName() + ",\n\n")
                 .append("\uD83D\uDCDD Su reserva ha sido confirmada.\n\n")
                 .append("Detalles de la reserva:\n")
                 .append("\uD83C\uDF1F ID de Reserva: " + reservationResponseDTO.getId() + "\n")
                 .append("\uD83D\uDCC5 Fecha: " + reservationResponseDTO.getDate() + "\n")
                 .append("\u23F0 Hora de Inicio: " + reservationResponseDTO.getStartTime() + "\n")
                 .append("\u23F1 Hora de Fin: " + reservationResponseDTO.getEndTime() + "\n")
-                .append("\uD83D\uDC65 Número de Invitados: " + reservationResponseDTO.getGuestNumber() + "\n")
                 .append("\uD83C\uDFE0 Mesas Reservadas: " + getTablesString(reservationResponseDTO.getTables()) + "\n")
-                .append("\uD83C\uDF74 Platos Pedidos: " + getOrdersString(reservationResponseDTO.getOrderDishes()) + "\n")
+                .append("\uD83C\uDF74 Platos Pedidos: " + getOrdersString(orderMapper.toOrders(reservationResponseDTO.getOrderDishes())) + "\n")
                 .append("\uD83D\uDCB5 Precio Total: S/." + String.format("%.2f", reservationResponseDTO.getPriceTotal()) + "\n\n")
                 .append("¡Gracias por su reserva!\n\n\n");
 

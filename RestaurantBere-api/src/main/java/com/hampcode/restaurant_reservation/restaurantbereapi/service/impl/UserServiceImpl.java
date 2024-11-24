@@ -74,16 +74,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileDTO updateCustomerProfile(Integer id, UserProfileDTO userProfileDTO) {
+        Integer AutenticatedId=getAuthenticatedUserIdFromJWT();
+        if(AutenticatedId!=id)
+        {
+            throw new IllegalArgumentException("No puedes editar un perfil que no es el tuyo");
+        }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
-
+        boolean existCustomer = customerRepository.existsByNameAndLastnameAndUserIdNot(userProfileDTO.getName(),userProfileDTO.getLastname(),id);
+        boolean existByDni= customerRepository.existsByDni(userProfileDTO.getDni());
         boolean existEmail = userRepository.existsByEmail(userProfileDTO.getEmail());
-        boolean existCustomer = customerRepository.existsByDni(userProfileDTO.getDni());
+
+
+
+
         if (existEmail) {
             throw new IllegalArgumentException("Email ingresado ya se encuentra registrado.");
         }
-        if (existCustomer) {
+        if (existByDni) {
             throw new IllegalArgumentException("DNI ingresado ya se encuentra registrado.");
+        }
+        if (existCustomer) {
+            throw new IllegalArgumentException("Ya existe un usuario con el mismo nombre y apellido");
         }
 
         if(user.getCustomer() != null) {
@@ -108,6 +120,12 @@ public class UserServiceImpl implements UserService {
     private UserProfileDTO registerUserWithRole(UserRegisterDTO userRegisterDTO, Role role) {
         boolean existsByEmail = userRepository.existsByEmail(userRegisterDTO.getEmail());
         boolean existsByDni = customerRepository.existsByDni(userRegisterDTO.getDni());
+        boolean existCustomer = customerRepository.existsByNameAndLastname(userRegisterDTO.getName(), userRegisterDTO.getLastname());
+
+        if (existCustomer) {
+            throw new IllegalArgumentException("Ya existe un usuario con el mismo nombre y apellido");
+        }
+
         if (existsByEmail) {
             throw new IllegalArgumentException("Email ingresado ya se encuentra registrado.");
         }
@@ -126,6 +144,7 @@ public class UserServiceImpl implements UserService {
         if(Objects.equals(role.getName(), "ROLE_CUSTOMER")){
             Customer customer = new Customer();
             customer.setName(userRegisterDTO.getName());
+            customer.setLastname(userRegisterDTO.getLastname());
             customer.setDni(userRegisterDTO.getDni());
             customer.setPhone(userRegisterDTO.getPhone());
             customer.setAddress(userRegisterDTO.getAddress());

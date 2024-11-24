@@ -18,7 +18,7 @@ public class IzipayServiceImpl implements IzipayService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public String createOrder(Integer amount, String userEmail, String successUrl, String cancelUrl) {
+    public IzipayOrderResponseDTO createOrder(Integer amount, String userEmail, String successUrl, String cancelUrl) {
         String url = "https://api.micuentaweb.pe/api-payment/V4/Charge/CreatePaymentOrder";
 
         ChannelOptionsDTO options = new ChannelOptionsDTO();
@@ -50,7 +50,7 @@ public class IzipayServiceImpl implements IzipayService {
         IzipayOrderResponseDTO responseBody = response.getBody();
 
         if (responseBody != null && responseBody.getAnswer().getPaymentURL() != null) {
-            return responseBody.getAnswer().getPaymentURL();
+            return responseBody;
         } else {
             throw new RuntimeException("Respuesta vacía o inválida del servidor");
         }
@@ -71,9 +71,16 @@ public class IzipayServiceImpl implements IzipayService {
         );
 
         IzipayOrderStatusResponseDTO responseBody = response.getBody();
-
+        System.out.println(responseBody);
         if (responseBody != null) {
-            return "SUCCESS".equalsIgnoreCase(responseBody.getStatus());
+            if(responseBody.getStatus().equals("SUCCESS"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         } else {
             throw new RuntimeException("Respuesta vacía del servidor");
         }

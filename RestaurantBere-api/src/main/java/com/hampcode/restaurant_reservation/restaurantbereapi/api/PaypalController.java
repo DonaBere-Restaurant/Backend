@@ -24,7 +24,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -90,25 +89,17 @@ public class PaypalController {
     @GetMapping("/pay-reservation/{reservationid}")
     public ResponseEntity<Map<String, String>> handleEventPayment(@PathVariable int reservationid) {
         Reservation reservation = reservationService.findReservationById(reservationid);
-
         if (reservation == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Reservacion no existente"));
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success";
+        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
-
         try {
+
             String approvalUrl = paypalService.createOrder(totalpagar, returnUrl, cancelUrl); // Mantén el returnUrl sin token
-            String token = approvalUrl; // El token es el approvalUrl
-
-            // Almacenar el token en la reserva
-            reservation.setPaymentToken(token);
-
-            // Actualizar la reserva con el token de pago
-            reservationService.updateReservation(reservation.getId(), reservationMapper.convertToRequestDTO(reservation));
 
             // Devolver la URL de aprobación proporcionada por PayPal
             Map<String, String> response = new HashMap<>();
@@ -119,19 +110,22 @@ public class PaypalController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error occurred during payment process."));
         }
     }
-    //localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/izipay/success
+
     @GetMapping("/pay-reservation/success")
-    public void handlePaymentSuccess(@RequestParam("token") String token, HttpServletResponse response) throws IOException {
-        boolean successPayment = false; // variable de control para enviar el correo si se completó el pago
-        Reservation reservation; // inicialización de la variable
+    public void handlePaymentSuccess(@RequestParam("token") String token,@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException {
+        boolean successPayment = false;
+        Reservation reservation = reservationService.findReservationById(idReserva);
         try {
             // Captura la orden usando el token de PayPal
             HttpResponse<Order> responseCapture = paypalService.captureOrder(token);
 
-            if (responseCapture.statusCode() == 201) { // Código 201 indica que el pago fue capturado exitosamente
-                // Marcar la reserva como pagada en la base de datos
+
+            if (responseCapture.statusCode() == 201) {
+                reservation.setPaymentToken(token);
+                reservationRespository.save(reservation);
                 reservationService.updatePaymentStatus(token, true);
                 successPayment = true;
+
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Error en la captura del pago.");
                 return;
@@ -143,13 +137,14 @@ public class PaypalController {
         }
 
         if (successPayment) {
+            String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            response.sendRedirect(redirectUrl); // Redirige al cliente
             reservation = reservationRespository.findByPaymentToken(token); // encuentra la reserva por token
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation); // mapeo a DTO de la reservación
             reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservationResponseDTO); // envía el correo
 
             // Redirigir a una URL del frontend
-            String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
-            response.sendRedirect(redirectUrl); // Redirige al cliente
+
         } else {
             response.getWriter().write("Pago completado con éxito.");
         }

@@ -12,6 +12,7 @@ public class UserProfileDTO {
     private Role role; //Rol puede ser ADMIN o USER.
 
     private String name;
+    private String lastname;
     private String dni;
     private String phone;
     private String address;
