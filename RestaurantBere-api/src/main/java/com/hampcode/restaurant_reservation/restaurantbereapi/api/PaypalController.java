@@ -140,8 +140,7 @@ public class PaypalController {
             String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
             reservation = reservationRespository.findByPaymentToken(token); // encuentra la reserva por token
-            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation); // mapeo a DTO de la reservación
-            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservationResponseDTO); // envía el correo
+            reservationConfirmationImpl.sendReservationEmail(bccRecipients, reservation); // envía el correo
 
             // Redirigir a una URL del frontend
 
