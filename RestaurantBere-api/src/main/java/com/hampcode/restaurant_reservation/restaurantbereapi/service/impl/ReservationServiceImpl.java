@@ -373,4 +373,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
+    public List<Reservation> getReservationsByCustomer(int customerId) {
+        return reservationRespository.findByCustomerId(customerId);
+    }
 }

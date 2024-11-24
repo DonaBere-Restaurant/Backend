@@ -26,4 +26,6 @@ public interface ReservationService {
     public boolean isTableAvailable(int tableId, LocalDate startDate, LocalTime startTime, LocalTime endTime);
     public List<ResTable> getAvailableTables(LocalDate date, LocalTime startTime, LocalTime endTime);
     public String cancelReservation(int id);
+    List<Reservation> getReservationsByCustomer(int customerId);
+
 }
