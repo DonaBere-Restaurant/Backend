@@ -8,6 +8,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.IzipayServi
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.UserService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.ReservationConfirmationImpl;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -116,7 +117,7 @@ public class IzipayController {
     }
 
     @GetMapping("/pay-reservation/success")
-    public void handlePaymentSuccess(@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException {
+    public void handlePaymentSuccess(@RequestParam("reserva") Integer idReserva, HttpServletResponse response) throws IOException, MessagingException {
         Reservation reserva = reservationService.findReservationById(idReserva);
         if (reserva == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Reserva no encontrada.");
@@ -124,14 +125,6 @@ public class IzipayController {
         }
 
         boolean successPayment = false;
-        String[] bccRecipients = {
-                "restaurantbere@gmail.com",
-                "jpalominoc5@upao.edu.pe",
-                "jaguilarb3@upao.edu.pe",
-                "opadillar1@upao.edu.pe",
-                "gguevarav2@upao.edu.pe",
-                "dacevedov1@upao.edu.pe"
-        };
 
         try {
 
@@ -156,13 +149,12 @@ public class IzipayController {
         }
 
         if (successPayment) {
-            // Enviar correo de confirmación
-            //ReservationResponseDTO reservationResponseDTO =reservationService.getReservationById(idReserva);
-            //System.out.println(reservationResponseDTO);
-            //reservationConfirmationImpl.sendReservationEmail(bccRecipients, reserva);
-            // Redirigir al frontend en caso de éxito
             String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado";
             response.sendRedirect(redirectUrl);
+
+            ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
+            String emailUser = reservationResponseDTO.getEmail();
+            reservationConfirmationImpl.sendReservationEmail(reservationResponseDTO, emailUser);
         } else {
             // Respuesta para pagos no exitosos
             response.getWriter().write("El pago no fue completado.");

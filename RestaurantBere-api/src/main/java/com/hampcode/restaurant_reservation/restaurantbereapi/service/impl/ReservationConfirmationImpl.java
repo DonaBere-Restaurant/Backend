@@ -1,82 +1,60 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.OrderMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.dto.Mail;
+import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.service.EmailService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.OrderResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.OrderRepository;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.EmailService;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationConfirmation;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 @Service
 public class ReservationConfirmationImpl implements ReservationConfirmation {
 
     @Autowired
     private EmailService emailService;
-    @Autowired
-    private JavaMailSender emailSender;
-    @Autowired
-    private UserServiceImpl userServiceImpl;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private OrderMapper orderMapper;
-    @Autowired
-    private ReservationMapper reservationMapper;
+
+    String[] bccRecipients = {"restaurantbere@gmail.com",
+            "jpalominoc5@upao.edu.pe",
+            "jaguilarb3@upao.edu.pe",
+            "opadillar1@upao.edu.pe",
+            "gguevarav2@upao.edu.pe",
+            "dacevedov1@upao.edu.pe"
+    };
+
     @Override
-    public void sendReservationEmail(String[] bccRecipients, Reservation reserva) {
-        ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
-        SimpleMailMessage message = new SimpleMailMessage();
-        User user = userRepository.findById(reservationResponseDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado."));
-        message.setTo(user.getEmail());
-        message.setSubject("Confirmación de Reserva");
-        message.setText(createEmailBody(reservationResponseDTO));
-        message.setBcc(bccRecipients);
-        emailSender.send(message);
-    }
-/*
-    @Override
-    public void sendReservationEmail(String[] bccRecipients, ReservationResponseDTO reservationResponseDTO) {
-        String client = reservationResponseDTO.getCustomer().getEmail();
+    public void sendReservationEmail(ReservationResponseDTO reservationResponseDTO, String userEmail) throws MessagingException {
         String subject = "\u2705 CONFIRMACIÓN DE RESERVA";
-        String body = createEmailBody(reservationResponseDTO) + generateSignature();
-        emailService.sendEmail(client, bccRecipients, subject, body);} */
 
-    private String createEmailBody(ReservationResponseDTO reservationResponseDTO) {
-        StringBuilder emailBody = new StringBuilder();
+        Map<String, Object> model = buildEmailModel(reservationResponseDTO);
 
-        emailBody.append("\uD83D\uDC4B Estimado " + reservationResponseDTO.getName() + ",\n\n")
-                .append("\uD83D\uDCDD Su reserva ha sido confirmada.\n\n")
-                .append("Detalles de la reserva:\n")
-                .append("\uD83C\uDF1F ID de Reserva: " + reservationResponseDTO.getId() + "\n")
-                .append("\uD83D\uDCC5 Fecha: " + reservationResponseDTO.getDate() + "\n")
-                .append("\u23F0 Hora de Inicio: " + reservationResponseDTO.getStartTime() + "\n")
-                .append("\u23F1 Hora de Fin: " + reservationResponseDTO.getEndTime() + "\n")
-                .append("\uD83C\uDFE0 Mesas Reservadas: " + getTablesString(reservationResponseDTO.getTables()) + "\n")
-                .append("\uD83C\uDF74 Platos Pedidos: " + getOrdersString(orderMapper.toOrders(reservationResponseDTO.getOrderDishes())) + "\n")
-                .append("\uD83D\uDCB5 Precio Total: S/." + String.format("%.2f", reservationResponseDTO.getPriceTotal()) + "\n\n")
-                .append("¡Gracias por su reserva!\n\n\n");
 
-        return emailBody.toString();
+        Mail customerMail = emailService.createMail(
+                userEmail,
+                subject,
+                bccRecipients,
+                model
+        );
+        emailService.sendEmail(customerMail, "email/NotificationReservation");
     }
 
-    private String generateSignature() {
-        return "Atentamente,\n" +
-                "\uD83C\uDF7DRestaurante Bere\n" +
-                "\uD83C\uDF10 https://restaurantbere-52059.web.app\n" +
-                "\uD83D\uDCDE +51 990 099 990\n" +
-                "\uD83D\uDCE7 restaurantbere@gmail.com";
+    private Map<String, Object> buildEmailModel(ReservationResponseDTO reservationResponseDTO) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("reservationId", reservationResponseDTO.getId());
+        model.put("date", reservationResponseDTO.getDate());
+        model.put("userName", reservationResponseDTO.getName());
+        model.put("startTime", reservationResponseDTO.getStartTime());
+        model.put("endTime", reservationResponseDTO.getEndTime());
+        model.put("tables", getTablesString(reservationResponseDTO.getTables()));
+        model.put("orderDishes", getOrdersString(reservationResponseDTO.getOrderDishes()));
+        model.put("priceTotal", String.format("%.2f", reservationResponseDTO.getPriceTotal()));
+        return model;
     }
 
     private String getTablesString(List<ReservationTable> tables) {
@@ -89,12 +67,12 @@ public class ReservationConfirmationImpl implements ReservationConfirmation {
         return tablesString.length() > 0 ? tablesString.substring(0, tablesString.length() - 2) : "Ninguna mesa reservada.";
     }
 
-    private String getOrdersString(List<Order> orders) {
+    private String getOrdersString(List<OrderResponseDTO> orders) {
         StringBuilder ordersString = new StringBuilder();
-        for (Order order : orders) {
+        for (OrderResponseDTO order : orders) {
             ordersString.append(order.getDish().getTitle()).append(", ");
         }
         return ordersString.length() > 0 ? ordersString.substring(0, ordersString.length() - 2) : "Ningún plato pedido.";
     }
-
 }
+
