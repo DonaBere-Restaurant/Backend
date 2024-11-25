@@ -179,10 +179,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
-        if(userId!=id){
-            throw new IllegalArgumentException("No puedes editar la contraseña de un usuario que no es el tuyo");
-        }
-
         // Verificar la contraseña actual
         if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Contraseña actual incorrecta.");
