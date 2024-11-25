@@ -1,15 +1,25 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.config;
-import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.io.IOException;
 
-@Configuration
-public class CorsConfig implements Filter {
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+
+
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
+public class CORSConfig implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -41,4 +51,6 @@ public class CorsConfig implements Filter {
         // TODO Auto-generated method stub
 
     }
+
+
 }

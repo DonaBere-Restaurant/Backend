@@ -47,7 +47,6 @@ public class ResenaController {
     }
 
 
-    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app", "http://localhost:4200"})
     @GetMapping("/all-resenas")
     public ResponseEntity<List<ResenaResponseDTO>> getAllResenas() {
         List<ResenaResponseDTO> resenas = resenaService.getAllResenas(); // Asegúrate de que este método esté definido correctamente en el servicio.
