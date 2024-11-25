@@ -146,7 +146,11 @@ public class ReservationController {
         ReservationResponseDTO responseDTO = mapper.convertToDTO(reservation);
         return ResponseEntity.ok(responseDTO);
     }
-
+    @PostMapping("/allTables")
+    public ResponseEntity<ReservationResponseDTO> reservaWithAlltables(@RequestBody ReservationRequestDTO reservationRequestDTO)
+    {
+        return new ResponseEntity<> (reservationService.createReservationWithAllTable(reservationRequestDTO),HttpStatus.CREATED);
+    }
 
     @PostMapping("/dia/mesas/menu")
     public ResponseEntity<?> reservationMenu(@RequestBody ReservationDishesRequestDTO reservationDishesRequestDTO) {
@@ -193,7 +197,7 @@ public class ReservationController {
         }
 
 
-        existingReservation.setPriceTotal(totalPagar);
+        existingReservation.setPriceTotal(existingReservation.getPriceTotal()+totalPagar);
         existingReservation.setOrderDishes(platos);
 
         existingReservation = mapper.convertToEntity(reservationService.updateReservation(existingReservation.getId(), mapper.convertToRequestDTO(existingReservation)));
