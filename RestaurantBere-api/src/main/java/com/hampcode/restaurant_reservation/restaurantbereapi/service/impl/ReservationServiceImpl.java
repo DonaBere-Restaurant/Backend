@@ -382,7 +382,7 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDateTime reservationTime = LocalDateTime.of(reservation.getDate(), reservation.getStartTime());
         long hoursRemaining = ChronoUnit.HOURS.between(LocalDateTime.now(), reservationTime);
 
-        if (hoursRemaining < 4) {
+        if (hoursRemaining < 24) {
             return "No se puede cancelar la reserva con menos de 4 horas de antelación.";
         }
 
