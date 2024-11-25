@@ -3,8 +3,10 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ResenaMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationTablesMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomResenaDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaResponseDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Resena;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Reservation;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
@@ -94,49 +96,52 @@ public class ResenaServiceImpl implements ResenaService {
     }
 
 
-    public List<ResenaResponseDTO> getAllResenas() {
+    @Override
+    public List<CustomResenaDTO> getAllResenas() {
         // Obtener todas las reseñas de la base de datos
-        List<Resena> resenas = resenaRepository.findAll();  // O usa otro repositorio adecuado para las reseñas
+        List<Resena> resenas = resenaRepository.findAll();
 
+        // Mapear cada Resena a un CustomResenaDTO
         return resenas.stream()
                 .map(resena -> {
-                    ResenaResponseDTO dto = new ResenaResponseDTO();
+                    CustomResenaDTO dto = new CustomResenaDTO();
                     dto.setId(resena.getId());
                     dto.setComentario(resena.getComentario());
                     dto.setCalificacion(resena.getCalificacion());
+                    dto.setReservationId(resena.getReservation().getId());
+                    dto.setFecha(resena.getReservation().getDate());
+                    // Obtener el customer asociado a la reserva de la reseña
+                    Reservation reservation = resena.getReservation();
+                    if (reservation != null && reservation.getCustomer() != null) {
+                        Customer customer = reservation.getCustomer().getCustomer();
+                        dto.setDni(customer.getDni());
+                        dto.setNombre(customer.getName() + " " + customer.getLastname());
+                        dto.setCorreo(customer.getUser().getEmail());
+
+                    }
+
                     return dto;
                 })
                 .collect(Collectors.toList());
     }
 
+
+
+    @Override
     public String eliminarResena(Integer resenaId) {
-        // Obtener el ID del usuario desde el JWT
-        Integer userId = reservationService.getAuthenticatedUserIdFromJWT();
-
-        if (userId == null) {
-            throw new RuntimeException("Usuario no autenticado");
-        }
-
         // Buscar la reseña a eliminar
         Resena resena = resenaRepository.findById(resenaId)
                 .orElseThrow(() -> new RuntimeException("Reseña no encontrada"));
 
         // Obtener la reserva asociada a la reseña
         Reservation reservation = resena.getReservation();
-        if (reservation == null) {
-            throw new RuntimeException("La reseña no está asociada a ninguna reserva");
+        if (reservation != null) {
+            // Desvincular la reseña de la reserva (si existe)
+            reservation.setResena(null);
+            reservationRespository.save(reservation);  // Guardar la reserva actualizada
         }
 
-        // Verificar que la reserva pertenece al usuario autenticado
-        if (!reservation.getCustomer().getId().equals(userId)) {
-            throw new RuntimeException("La reserva no pertenece al usuario autenticado");
-        }
-
-        // Primero, poner la relación 'resena' de la reserva a null
-        reservation.setResena(null);
-        reservationRespository.save(reservation);  // Guardar la reserva actualizada
-
-        // Ahora eliminar la reseña de la base de datos
+        // Eliminar la reseña de la base de datos
         resenaRepository.delete(resena);
 
         // Devolver un mensaje de éxito
