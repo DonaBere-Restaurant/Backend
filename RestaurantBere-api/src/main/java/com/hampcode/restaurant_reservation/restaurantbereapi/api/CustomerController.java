@@ -21,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/customer")
 @AllArgsConstructor
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;

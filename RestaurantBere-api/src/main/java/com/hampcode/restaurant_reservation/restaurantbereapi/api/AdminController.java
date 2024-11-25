@@ -15,6 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 @AllArgsConstructor
 public class AdminController {
     private final ReservationService reservationService;

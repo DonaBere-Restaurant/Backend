@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/drink")
 @AllArgsConstructor
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class DrinkController {
 
     private final DrinkService drinkService;

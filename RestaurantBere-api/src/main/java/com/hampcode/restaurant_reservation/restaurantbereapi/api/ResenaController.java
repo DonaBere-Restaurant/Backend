@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/resena")
 @AllArgsConstructor
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class ResenaController {
 
 

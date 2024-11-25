@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user/profile")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class UserProfileController {
 
     private final UserService userService;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class AuthController {
 
     private final UserService userService;

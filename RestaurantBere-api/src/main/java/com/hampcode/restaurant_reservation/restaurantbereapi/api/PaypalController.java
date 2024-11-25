@@ -23,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -85,7 +86,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "http://localhost:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        String returnUrl = "https://bere-api.onrender.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {

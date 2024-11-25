@@ -22,9 +22,8 @@ import org.springframework.stereotype.Component;
 public class CORSConfig implements Filter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-
+    public void init(FilterConfig filterConfig) {
+        // No es necesario inicializar nada en este caso.
     }
 
     @Override
@@ -33,7 +32,11 @@ public class CORSConfig implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        // Agregar log para ver si la solicitud llega aquí
+        System.out.println("Request Method: " + request.getMethod());
+
+        // Configuración de CORS
+        response.setHeader("Access-Control-Allow-Origin", "https://restaurantbere-52059.web.app");
         response.setHeader("Access-Control-Allow-Methods", "DELETE, GET, OPTIONS, PATCH, POST, PUT");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN");
@@ -43,13 +46,11 @@ public class CORSConfig implements Filter {
         } else {
             chain.doFilter(req, res);
         }
-        // chain.doFilter(req, res);
     }
 
     @Override
     public void destroy() {
-        // TODO Auto-generated method stub
-
+        // No es necesario limpiar nada en este caso.
     }
 
 

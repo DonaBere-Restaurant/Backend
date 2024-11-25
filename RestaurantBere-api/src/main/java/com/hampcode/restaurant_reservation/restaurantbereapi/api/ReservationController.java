@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
 public class ReservationController {
 
     @Autowired
