@@ -70,6 +70,9 @@ public class Reservation {
     @Column(name = "res_ref_sta_bo",nullable = true)
     private boolean refoundstatus = false;
 
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OrderDrink> orderDrinks;
+
     public boolean getPaymentstatus() {
         return paymentstatus;
     }

@@ -10,6 +10,7 @@ public class Drink {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dri_id_in")
     private Integer id;
 
     @Column(name = "drink_name", nullable = false)

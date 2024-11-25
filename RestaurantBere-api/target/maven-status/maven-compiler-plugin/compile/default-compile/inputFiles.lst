@@ -19,11 +19,15 @@ D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\exception\GlobalExceptionHandler.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\exception\ResourceNotFoundException.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\exception\TableNotAvailableException.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\dto\Mail.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\service\EmailService.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\CustomerMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\DishMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\DrinkMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderDishMapper.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderDrinkMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderMapper.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderOrderDrinkMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ReservationMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ReservationTablesMapper.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ResTableMapper.java
@@ -45,10 +49,13 @@ D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\LoginDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\LoginRequestDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDishDTO.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkRequestDTO.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkResponseDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderResponseDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ResenaRequestDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ResenaResponseDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationDishesRequestDTO.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationDrinksRequestDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationRequestDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationResponseDTO.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationTablesRequestDTO.java
@@ -62,6 +69,8 @@ D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Drink.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Order.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDishId.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrink.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrinkId.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Resena.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Reservation.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\ReservationTable.java
@@ -72,6 +81,7 @@ D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\CustomerRepository.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\DishRepository.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\DrinkRepository.java
+D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\OrderDrinkRepository.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\OrderRepository.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResenaRepository.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\repository\ReservationRespository.java
@@ -89,7 +99,6 @@ D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\CustomerService.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\DishService.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\DrinkService.java
-D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\EmailService.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\CustomerServiceImpl.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\DishServiceImpl.java
 D:\Descargas\Documents\6 ciclo\Inso 2\DoñaBere\RestaurantBere-api\src\main\java\com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\DrinkServiceImpl.java

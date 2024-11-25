@@ -27,7 +27,7 @@ public class ReservationRequestDTO {
 
 
     private List<OrderDishDTO> orderDishes;
-
+    private List<OrderDrinkRequestDTO> orderDrinks;
     private List<ReservationTable> tables;
 
     private String paymentToken;

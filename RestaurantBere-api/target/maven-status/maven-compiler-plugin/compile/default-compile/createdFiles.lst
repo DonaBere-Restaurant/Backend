@@ -3,6 +3,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationRespo
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderMapper.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\DishServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\IzipayOrderResponseDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkRequestDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\exception\TableNotAvailableException.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ChannelOptionsDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\UpdateReservationRequestDTO.class
@@ -29,6 +30,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\api\IzipayController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\ReservationConfirmationImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\User.class
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\CustomerMapper.class
+com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderOrderDrinkMapper.class
 com\hampcode\restaurant_reservation\restaurantbereapi\exception\ResourceNotFoundException.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\CorsConfig.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\CustomerDataForReservationDTO.class
@@ -41,16 +43,17 @@ com\hampcode\restaurant_reservation\restaurantbereapi\config\WebSecurityConfig.c
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Resena.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\DrinkRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\PaypalServiceImpl.class
+com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderDrinkMapper.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDishDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\ReservationServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\IzipayServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\UserServiceImpl.class
-com\hampcode\restaurant_reservation\restaurantbereapi\service\EmailService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\RestExceptionHandler.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResTableRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ResTableResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\UserRegisterDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\RoleRepository.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrink.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\DrinkResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\AuthController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\ModelMapperConfig.class
@@ -58,10 +61,13 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Reservation.c
 com\hampcode\restaurant_reservation\restaurantbereapi\exception\BadRequestException.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ResTableRequestDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\ResTable.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationDrinksRequestDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\DishRequestDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ReservationTablesMapper.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrinkId.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\CustomerService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\IUploadFileServiceImpl.class
+com\hampcode\restaurant_reservation\restaurantbereapi\repository\OrderDrinkRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\security\JWTFilter.class
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ResTableMapper.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\IzipayOrderRequestDTO.class
@@ -79,6 +85,8 @@ com\hampcode\restaurant_reservation\restaurantbereapi\api\UserProfileController.
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ResenaService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\ReservationController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationRequestDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\service\EmailService.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResenaRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\DishService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\CustomerServiceImpl.class
@@ -90,6 +98,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\CustomerResponse
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ReservationTableRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\ResenaController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\DishResponseDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\dto\Mail.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ReservationConfirmation.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ResTableService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Dish.class

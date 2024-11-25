@@ -1,22 +1,23 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "Order_reservation")
-public class Order {
+@Table(name = "Order_drink_reservation")
+public class OrderDrink {
 
     @EmbeddedId
     @JsonIgnore
-    private OrderDishId id;
+    private OrderDrinkId id;
 
     @ManyToOne
-    @MapsId("dishId")
-    @JoinColumn(name = "dis_id_in")
-    private Dish dish;
+    @MapsId("drinkId")
+    @JoinColumn(name = "dri_id_in")
+    private Drink drink;
 
     @Column(name="res_can_in")
     private int quantity;

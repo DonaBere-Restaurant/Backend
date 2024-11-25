@@ -12,11 +12,11 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDishId implements Serializable {
+public class OrderDrinkId implements Serializable {
 
-    @Column(name = "dis_id_in") // Asegúrate de que el nombre de la columna coincida con tu base de datos
-    private Integer dishId;
+    @Column(name = "dri_id_in")
+    private int drinkId;
 
-    @Column(name = "res_id_in") // Asegúrate de que el nombre de la columna coincida con tu base de datos
-    private Integer reservationId;
+    @Column(name = "res_id_in")
+    private int reservationId;
 }
