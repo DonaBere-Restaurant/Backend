@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
-@CrossOrigin(origins = {"https://restaurantbere-52059.web.app, http://localhost:4200"})
 public class DishController {
 
     private final DishServiceImpl dishServiceImpl;

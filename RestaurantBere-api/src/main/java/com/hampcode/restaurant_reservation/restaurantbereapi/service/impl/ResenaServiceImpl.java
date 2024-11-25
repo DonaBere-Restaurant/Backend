@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ResenaMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.ReservationTablesMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaRequestDTO;
@@ -34,6 +35,8 @@ public class ResenaServiceImpl implements ResenaService {
     private ReservationService reservationService;
     @Autowired
     private ResenaRepository resenaRepository;
+    @Autowired
+    private ResenaMapper resenaMapper; // Inyectamos ResenaMapper
 
     @Override
     public ResenaResponseDTO publicar_resena(ResenaRequestDTO resenaRequestDTO) {
@@ -141,6 +144,13 @@ public class ResenaServiceImpl implements ResenaService {
         return "Reseña eliminada exitosamente";
     }
 
+    @Override
+    public ResenaResponseDTO getResenaById(Integer id) {
+        Resena resena = resenaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Reseña no encontrada con ID " + id));
+
+        return resenaMapper.convertToDTO(resena);  // Usamos convertToDTO desde ResenaMapper
+    }
 
 
 }

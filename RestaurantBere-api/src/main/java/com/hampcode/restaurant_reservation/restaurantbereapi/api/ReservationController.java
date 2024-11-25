@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app, http://localhost:4200")
 public class ReservationController {
 
     @Autowired
@@ -335,7 +334,6 @@ public class ReservationController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @CrossOrigin(origins = {"https://restaurantbere-52059.web.app/, http://localhost:4200"})
     @GetMapping("/all-reservations")
     public ResponseEntity<List<CustomReservationResponseDTO>> getAllReservationsC() {
         // Obtener el ID del usuario autenticado desde el JWT
