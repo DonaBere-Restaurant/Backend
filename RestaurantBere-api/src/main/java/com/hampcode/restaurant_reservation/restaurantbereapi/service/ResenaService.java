@@ -12,4 +12,5 @@ public interface ResenaService {
     public ResenaResponseDTO publicar_resena(ResenaRequestDTO resenaRequestDTO);
     public List<ResenaResponseDTO> getAllResenas();
     public String eliminarResena(Integer resenaId);
+    public ResenaResponseDTO getResenaById(Integer resenaId);
 }
