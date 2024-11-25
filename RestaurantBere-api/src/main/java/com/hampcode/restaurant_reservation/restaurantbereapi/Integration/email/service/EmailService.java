@@ -4,6 +4,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.d
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,11 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
-    public Mail createMail(String to, String subject, String[] bccRecipients, Map<String, Object> model) {
+    public Mail createMail(String to, String subject, @Nullable String[] bccRecipients, Map<String, Object> model) {
         Mail mail = new Mail();
         mail.setFrom("govench6@gmail.com");
         mail.setTo(to);
+        mail.setBcc(bccRecipients != null ? bccRecipients : new String[0]);
         mail.setSubject(subject);
         mail.setModel(model);
         return mail;
@@ -40,6 +42,7 @@ public class EmailService {
         String html = templateEngine.process(templateName, context);
         helper.setTo(mail.getTo());
         helper.setText(html, true);
+        helper.setBcc(mail.getBcc());
         helper.setSubject(mail.getSubject());
         helper.setFrom(mail.getFrom());
 
