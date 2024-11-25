@@ -1,5 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomResenaDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Resena;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,8 +50,8 @@ public class ResenaController {
 
 
     @GetMapping("/all-resenas")
-    public ResponseEntity<List<ResenaResponseDTO>> getAllResenas() {
-        List<ResenaResponseDTO> resenas = resenaService.getAllResenas(); // Asegúrate de que este método esté definido correctamente en el servicio.
+    public ResponseEntity<List<CustomResenaDTO>> getAllResenas() {
+        List<CustomResenaDTO> resenas = resenaService.getAllResenas(); // Asegúrate de que este método esté definido correctamente en el servicio.
 
         if (resenas.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);  // Si no hay reseñas, devolver 204 No Content
@@ -57,7 +59,7 @@ public class ResenaController {
         return new ResponseEntity<>(resenas, HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/eliminar-resena/{id}")
     public ResponseEntity<String> eliminarResena(@PathVariable Integer id) {
         try {
