@@ -42,4 +42,9 @@ public interface ReservationRespository extends JpaRepository<Reservation, Integ
     List<Reservation> findByCustomerId(int customerId);
 
     List<Reservation> findByPaymentstatusTrue();
+
+    @Query("SELECT r FROM Reservation r WHERE r.customer.id = :customerId ORDER BY r.date DESC, r.startTime DESC")
+    List<Reservation> findMostRecentReservationByCustomerId(@Param("customerId") int customerId);
+
+
 }
