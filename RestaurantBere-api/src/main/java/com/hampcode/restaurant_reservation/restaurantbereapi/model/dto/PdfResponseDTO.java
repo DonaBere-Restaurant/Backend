@@ -23,5 +23,6 @@ public class PdfResponseDTO {
     private LocalTime endTime;
     private List<ResTableResponseDTO> tables;
     private List<OrderResponseDTO> orderDishes;
+    private List<OrderDrinkResponseDTO> orderDrinks;
     private double priceTotal;
 }

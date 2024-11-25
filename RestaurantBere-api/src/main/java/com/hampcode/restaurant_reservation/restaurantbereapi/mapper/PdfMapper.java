@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 public class PdfMapper {
     private final OrderMapper orderMapper;
     private final ResTableMapper resTableMapper;
+    private final DrinkMapper drinkMapper;
     private final UserServiceImpl userServiceImpl;
+    private final OrderDrinkMapper orderDrinkMapper;
 
     public PdfResponseDTO convertToPdfDTO(Reservation reservation, Integer userId) {
         PdfResponseDTO pdfResponseDTO = new PdfResponseDTO();
@@ -39,6 +41,9 @@ public class PdfMapper {
 
         // Detalles de platos pedidos
         pdfResponseDTO.setOrderDishes(orderMapper.toOrderResponseDTO(reservation.getOrderDishes()));
+
+        // Detalles de bebidas reservadas
+        pdfResponseDTO.setOrderDrinks(orderDrinkMapper.convertToListDTO(reservation.getOrderDrinks()));
 
         return pdfResponseDTO;
     }
