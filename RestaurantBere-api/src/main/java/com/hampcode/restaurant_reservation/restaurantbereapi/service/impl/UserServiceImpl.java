@@ -1,10 +1,7 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.UserMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.AuthResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserProfileDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserRegisterDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Role;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
@@ -85,9 +82,6 @@ public class UserServiceImpl implements UserService {
         boolean existCustomer = customerRepository.existsByNameAndLastnameAndUserIdNot(userProfileDTO.getName(),userProfileDTO.getLastname(),id);
         boolean existByDni= customerRepository.existsByDni(userProfileDTO.getDni());
         boolean existEmail = userRepository.existsByEmail(userProfileDTO.getEmail());
-
-
-
 
         if (existEmail) {
             throw new IllegalArgumentException("Email ingresado ya se encuentra registrado.");
@@ -177,5 +171,38 @@ public class UserServiceImpl implements UserService {
             return user != null ? user.getId() : null;
         }
         return null; // Si no hay autenticación, devuelve null
+    }
+
+    @Override
+    public String updatePassword(Integer id, PasswordDTO passwordDTO) {
+        Integer userId = getAuthenticatedUserIdFromJWT();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
+
+        if(userId!=id){
+            throw new IllegalArgumentException("No puedes editar la contraseña de un usuario que no es el tuyo");
+        }
+
+        // Verificar la contraseña actual
+        if (!passwordEncoder.matches(passwordDTO.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Contraseña actual incorrecta.");
+        }
+
+        // Verificar que la nueva contraseña no esté vacía
+        if (passwordDTO.getNewPassword() == null || passwordDTO.getNewPassword().isEmpty()) {
+            throw new IllegalArgumentException("La nueva contraseña no puede estar vacía.");
+        }
+
+        // Verificar que la nueva contraseña y la confirmación coincidan
+        if (!passwordDTO.getNewPassword().equals(passwordDTO.getConfirmPassword())) {
+            throw new IllegalArgumentException("La nueva contraseña y la confirmación no coinciden.");
+        }
+
+        // Actualizar la contraseña usando el mapper
+        user = userMapper.updateUserPassword(user, passwordDTO);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return "Contraseña Actualizada";
     }
 }
