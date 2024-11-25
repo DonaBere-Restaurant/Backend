@@ -15,12 +15,18 @@ import java.util.List;
 public class ReservationResponseDTO {
     private int id;
     private LocalDate date;
-    private Customer customer;
+    private String name;
+    private String lastname;
+    private String email;
+    private String phone;
+    private String address;
+    private String dni;
     private LocalTime startTime;
     private LocalTime endTime;
     private List<ReservationTable> tables;
-    private int guestNumber;
-    private List<Order> orderDishes;
+    private List<OrderResponseDTO> orderDishes;
+    private List<OrderDrinkResponseDTO> orderDrinks;
     private double priceTotal;
+    boolean refoundstatus;
 
 }

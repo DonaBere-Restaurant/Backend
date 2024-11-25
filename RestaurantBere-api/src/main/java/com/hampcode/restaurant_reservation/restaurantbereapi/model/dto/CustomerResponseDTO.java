@@ -16,6 +16,5 @@ public class CustomerResponseDTO {
     private LocalDate registerDate;
     private String phone;
     private String email;
-    private String password;
     private String address;
 }

@@ -19,19 +19,18 @@ public class ReservationRequestDTO {
     @NotBlank(message = "El id de la reserva no debe estar vacio")
     private int id;
     @NotBlank(message = "La fecha de la reserva no puede estar vacia")
-    //@Future(message = "La fecha debe ser una fecha futura")
     private LocalDate date;
 
-    @NotNull(message = "El Id del cliente no puede estar vacio")
-    private Customer customer;
+    private User customer;
 
-    //@NotBlank(message = "La hora de inicio de la reserva no puede estar vacía")
     private LocalTime startTime;
 
-    private int guestNumber;
-    private double priceTotal;
-    private List<OrderDishDTO> orderDishes;
 
+    private List<OrderDishDTO> orderDishes;
+    private List<OrderDrinkRequestDTO> orderDrinks;
     private List<ReservationTable> tables;
+
     private String paymentToken;
+
+    private double priceTotal;
 }

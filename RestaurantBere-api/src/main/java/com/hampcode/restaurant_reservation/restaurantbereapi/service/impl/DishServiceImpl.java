@@ -2,7 +2,7 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.exception.ResourceNotFoundException;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.DishMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRequesDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.DishRepository;
@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -19,6 +20,7 @@ public class DishServiceImpl implements DishService {
 
     private final DishRepository dishRepository;
     private final DishMapper dishMapper;
+    private final IUploadFileServiceImpl uploadFileService;
 
 
     @Transactional(readOnly = true)
@@ -34,18 +36,39 @@ public class DishServiceImpl implements DishService {
     }
 
     @Transactional
-    public DishResponseDTO createDish(DishRequesDTO dishRequesDTO) {
-        Dish dish = dishMapper.convertToEntity(dishRequesDTO);
+    public DishResponseDTO createDish(DishRequestDTO dishRequestDTO){
+        String imagePath;
+
+        try {
+            imagePath = uploadFileService.copy(dishRequestDTO.getImage());
+        } catch (IOException e){
+            throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
+        }
+
+        Dish dish = dishMapper.convertToEntity(dishRequestDTO);
+
+        dish.setImage(imagePath);
         dishRepository.save(dish);
         return dishMapper.convertToDTO(dish);
     }
 
     @Transactional
-    public DishResponseDTO updateDish(int id, DishRequesDTO dishRequesDTO) {
-        Dish dish = dishRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Plato no encontrado con el numero:"+id));
-        if(dishRequesDTO.getTitle() != null)dish.setTitle(dishRequesDTO.getTitle());
-        if(dishRequesDTO.getDescription() != null)dish.setDescription(dishRequesDTO.getDescription());
-        if(dishRequesDTO.getPrice() != 0)dish.setPrice(dishRequesDTO.getPrice());
+    public DishResponseDTO updateDish(int id, DishRequestDTO dishRequestDTO) {
+        Dish dish = dishRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Plato no encontrado con el numero:" + id));
+
+        if (dishRequestDTO.getTitle() != null) dish.setTitle(dishRequestDTO.getTitle());
+        if (dishRequestDTO.getDescription() != null) dish.setDescription(dishRequestDTO.getDescription());
+        if (dishRequestDTO.getPrice() != 0) dish.setPrice(dishRequestDTO.getPrice());
+
+        if (dishRequestDTO.getImage() != null) {
+            try {
+                String imagePath = uploadFileService.copy(dishRequestDTO.getImage());
+                dish.setImage(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
+            }
+        }
 
         dish = dishRepository.save(dish);
 

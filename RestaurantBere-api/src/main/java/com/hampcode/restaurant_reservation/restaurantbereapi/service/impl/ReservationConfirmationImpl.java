@@ -1,49 +1,57 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
-
+import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.dto.Mail;
+import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.service.EmailService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.OrderResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ReservationResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Order;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.ReservationTable;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.ReservationConfirmation;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 @Service
 public class ReservationConfirmationImpl implements ReservationConfirmation {
     @Autowired
-    private JavaMailSender emailSender;
+    private EmailService emailService;
+
+    String[] bccRecipients = {"restaurantbere@gmail.com",
+            "jpalominoc5@upao.edu.pe",
+            "jaguilarb3@upao.edu.pe",
+            "opadillar1@upao.edu.pe",
+            "gguevarav2@upao.edu.pe",
+            "dacevedov1@upao.edu.pe"
+    };
 
     @Override
-    public void sendReservationEmail(String[] bccRecipients, ReservationResponseDTO reservationResponseDTO) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(reservationResponseDTO.getCustomer().getEmail());
-        message.setSubject("Confirmación de Reserva");
-        message.setText(createEmailBody(reservationResponseDTO));
-        message.setBcc(bccRecipients);
-        emailSender.send(message);
+    public void sendReservationEmail(ReservationResponseDTO reservationResponseDTO, String userEmail) throws MessagingException {
+        String subject = "\u2705 CONFIRMACIÓN DE RESERVA";
+
+        Map<String, Object> model = buildEmailModel(reservationResponseDTO);
+
+
+        Mail customerMail = emailService.createMail(
+                userEmail,
+                subject,
+                bccRecipients,
+                model
+        );
+        emailService.sendEmail(customerMail, "email/NotificationReservation");
     }
 
-    private String createEmailBody(ReservationResponseDTO reservationResponseDTO) {
-        StringBuilder emailBody = new StringBuilder();
-
-        emailBody.append("Estimado ").append(reservationResponseDTO.getCustomer().getName()).append(",\n\n")
-                .append("Su reserva ha sido confirmada.\n\n")
-                .append("Detalles de la reserva:\n")
-                .append("ID de Reserva: ").append(reservationResponseDTO.getId()).append("\n")
-                .append("Fecha: ").append(reservationResponseDTO.getDate()).append("\n")
-                .append("Hora de Inicio: ").append(reservationResponseDTO.getStartTime()).append("\n")
-                .append("Hora de Fin: ").append(reservationResponseDTO.getEndTime()).append("\n")
-                .append("Número de Invitados: ").append(reservationResponseDTO.getGuestNumber()).append("\n")
-                .append("Mesas Reservadas: ").append(getTablesString(reservationResponseDTO.getTables())).append("\n")
-                .append("Platos Pedidos: ").append(getOrdersString(reservationResponseDTO.getOrderDishes())).append("\n")
-                .append("Precio Total: $").append(String.format("%.2f", reservationResponseDTO.getPriceTotal())).append("\n\n")
-                .append("¡Gracias por su reserva!");
-
-        return emailBody.toString();
+    private Map<String, Object> buildEmailModel(ReservationResponseDTO reservationResponseDTO) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("reservationId", reservationResponseDTO.getId());
+        model.put("date", reservationResponseDTO.getDate());
+        model.put("userName", reservationResponseDTO.getName());
+        model.put("startTime", reservationResponseDTO.getStartTime());
+        model.put("endTime", reservationResponseDTO.getEndTime());
+        model.put("tables", getTablesString(reservationResponseDTO.getTables()));
+        model.put("orderDishes", getOrdersString(reservationResponseDTO.getOrderDishes()));
+        model.put("priceTotal", String.format("%.2f", reservationResponseDTO.getPriceTotal()));
+        return model;
     }
 
     private String getTablesString(List<ReservationTable> tables) {
@@ -56,12 +64,12 @@ public class ReservationConfirmationImpl implements ReservationConfirmation {
         return tablesString.length() > 0 ? tablesString.substring(0, tablesString.length() - 2) : "Ninguna mesa reservada.";
     }
 
-    private String getOrdersString(List<Order> orders) {
+    private String getOrdersString(List<OrderResponseDTO> orders) {
         StringBuilder ordersString = new StringBuilder();
-        for (Order order : orders) {
+        for (OrderResponseDTO order : orders) {
             ordersString.append(order.getDish().getTitle()).append(", ");
         }
         return ordersString.length() > 0 ? ordersString.substring(0, ordersString.length() - 2) : "Ningún plato pedido.";
     }
-
 }
+

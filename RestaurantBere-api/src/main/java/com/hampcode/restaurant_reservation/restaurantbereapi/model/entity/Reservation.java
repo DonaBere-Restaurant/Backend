@@ -43,7 +43,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "customer_cus_id_in", nullable = true)
-    private Customer customer;
+    private User customer;
 
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
@@ -51,6 +51,9 @@ public class Reservation {
 
     @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Order> orderDishes;
+
+    @OneToOne
+    private Resena resena;
 
     @Column(name = "res_sta_pay_bo", nullable = true)
     private boolean paymentstatus = false;
@@ -61,7 +64,18 @@ public class Reservation {
     @Column (name = "res_tok_vc")
     private String paymentToken;
 
+    @Column(name = "res_sta_int")
+    private int status; // 0: Reservado, 1: En Finalizado, 2: Cancelado
+
+    @Column(name = "res_ref_sta_bo",nullable = true)
+    private boolean refoundstatus = false;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OrderDrink> orderDrinks;
+
     public boolean getPaymentstatus() {
         return paymentstatus;
     }
+
+    public boolean getRefoundstatus() {return refoundstatus;}
 }

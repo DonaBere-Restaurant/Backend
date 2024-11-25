@@ -1,12 +1,13 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.mapper;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRequesDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -15,9 +16,10 @@ public class DishMapper {
 
     private final ModelMapper modelMapper;
 
-    public Dish convertToEntity(DishRequesDTO dishRequesDTO){
-        return modelMapper.map(dishRequesDTO, Dish.class);
+    public Dish convertToEntity(DishRequestDTO dishRequestDTO){
+        return  modelMapper.map(dishRequestDTO, Dish.class);
     }
+
     public Dish convertToEntity(DishResponseDTO dishResponseDTO){
         return modelMapper.map(dishResponseDTO, Dish.class);
     }

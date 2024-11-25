@@ -14,6 +14,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "dish")
 public class Dish {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dis_id_in")
@@ -28,4 +29,6 @@ public class Dish {
     @Column(name = "dis_pri_do", nullable = false)
     private double price;
 
+    @Column(name = "dis_img_var")
+    private String image;
 }
