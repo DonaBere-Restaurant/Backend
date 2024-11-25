@@ -141,6 +141,20 @@ public class ResenaServiceImpl implements ResenaService {
         return "Reseña eliminada exitosamente";
     }
 
+    public ResenaResponseDTO getResenaById(Integer resenaId){
+        // Buscar la reseña por su ID
+        Resena resena = resenaRepository.findById(resenaId)
+                .orElseThrow(() -> new EntityNotFoundException("Reseña no encontrada"));
+
+        // Crear el DTO de la reseña
+        ResenaResponseDTO resenaResponseDTO = new ResenaResponseDTO();
+        resenaResponseDTO.setId(resena.getId());
+        resenaResponseDTO.setComentario(resena.getComentario());
+        resenaResponseDTO.setCalificacion(resena.getCalificacion());
+        resenaResponseDTO.setReservationId(resena.getReservation().getId());
+
+        return resenaResponseDTO;
+    }
 
 
 }

@@ -68,4 +68,14 @@ public class ResenaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());  // En caso de error, devuelve BAD_REQUEST
         }
     }
+
+    @GetMapping("/resena/{id}")
+    public ResponseEntity<ResenaResponseDTO> getResenaById(@PathVariable Integer id) {
+        try {
+            ResenaResponseDTO resena = resenaService.getResenaById(id);  // Llamada al servicio que obtiene la reseña por ID
+            return ResponseEntity.ok(resena);  // Devuelve la reseña si se encontró
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);  // Devuelve NOT_FOUND si no se encontró la reseña
+        }
+    }
 }
