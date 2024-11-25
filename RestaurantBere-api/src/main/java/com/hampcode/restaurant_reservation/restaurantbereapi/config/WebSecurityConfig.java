@@ -51,6 +51,7 @@ public class WebSecurityConfig {
                         .requestMatchers(antMatcher("/reservasion/dia/mesas/menu")).permitAll()
                         .requestMatchers(antMatcher("/reservasion/dia/mesas/menu/datos/pay-reservation/**")).permitAll()
                         .requestMatchers(antMatcher("/izipay/pay-reservation/**")).permitAll()
+                        .requestMatchers(antMatcher("/mail/**")).permitAll()
                         .requestMatchers("/api/v1/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**").permitAll()
                         // TODO: Cualquier otra solicitud requiere autenticación (JWT u otra autenticación configurada)
                         .anyRequest().authenticated()
