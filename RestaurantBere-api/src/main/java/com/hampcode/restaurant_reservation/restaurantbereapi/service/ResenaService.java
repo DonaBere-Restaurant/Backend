@@ -4,8 +4,12 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaReq
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.ResenaResponseDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface ResenaService {
 
     public ResenaResponseDTO publicar_resena(ResenaRequestDTO resenaRequestDTO);
+    public List<ResenaResponseDTO> getAllResenas();
+    public String eliminarResena(Integer resenaId);
 }
