@@ -14,18 +14,20 @@ import java.util.stream.Collectors;
 public class OrderDishMapper {
     private final ModelMapper modelMapper;
 
-
     public Order convertToEntity(OrderDishDTO orderDishDTO) {
         return modelMapper.map(orderDishDTO, Order.class);
     }
+
     public OrderDishDTO convertToDto(Order order) {
         return modelMapper.map(order, OrderDishDTO.class);
     }
+
     public List<Order> convertToEntityList(List<OrderDishDTO> orderDishDTOs) {
         return orderDishDTOs.stream()
                 .map(this::convertToEntity)
                 .collect(Collectors.toList());
     }
+
     public List<OrderDishDTO> convertToDtoList(List<Order> orders) {
         return orders.stream()
                 .map(order -> modelMapper.map(order, OrderDishDTO.class))

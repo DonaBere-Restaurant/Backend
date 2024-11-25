@@ -21,6 +21,7 @@ public class ReservationMapper {
     private final UserRepository userRepository;
     private final UserService userService;
     private final OrderMapper orderMapper;
+    private final OrderDrinkMapper orderDrinkMapper;
 
     public Reservation convertToEntity(ReservationRequestDTO reservationRequestDTO) {
         return modelMapper.map(reservationRequestDTO, Reservation.class);
@@ -33,6 +34,9 @@ public class ReservationMapper {
     }
     public Reservation convertToEntity(ReservationDishesRequestDTO reservationDishesRequestDTO) {
         return modelMapper.map(reservationDishesRequestDTO, Reservation.class);
+    }
+    public Reservation convertToEntity(ReservationDrinksRequestDTO reservationDrinksRequestDTO){
+        return modelMapper.map(reservationDrinksRequestDTO, Reservation.class);
     }
 
     public ReservationResponseDTO convertToDTO(Reservation reservation) {
@@ -49,6 +53,9 @@ public class ReservationMapper {
             if(reservation.getOrderDishes()!=null)
             {
                 reservationResponseDTO.setOrderDishes(orderMapper.toOrderResponseDTO(reservation.getOrderDishes()));
+            }
+            if(reservation.getOrderDrinks()!=null){
+                reservationResponseDTO.setOrderDrinks(orderDrinkMapper.convertToListDTO(reservation.getOrderDrinks()));
             }
 
         return reservationResponseDTO;

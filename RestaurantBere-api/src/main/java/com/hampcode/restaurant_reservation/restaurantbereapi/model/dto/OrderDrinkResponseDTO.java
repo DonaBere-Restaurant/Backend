@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponseDTO {
-    private DishResponseDTO dish;
+public class OrderDrinkResponseDTO {
+
+    private DrinkResponseDTO drink;
+
     private int quantity;
 }
