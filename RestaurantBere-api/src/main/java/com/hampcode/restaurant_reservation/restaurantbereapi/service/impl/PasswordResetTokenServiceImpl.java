@@ -34,6 +34,8 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
 
+        passwordResetTokenRepository.deleteByUser(user);
+
         PasswordResetToken passwordResetToken = new PasswordResetToken();
         passwordResetToken.setToken(UUID.randomUUID().toString());
         passwordResetToken.setUser(user);
@@ -41,7 +43,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         passwordResetTokenRepository.save(passwordResetToken);
 
         Map<String, Object> model =new  HashMap<>();
-        String resetUrl = "http://localhost:4200/#/forgot/" + passwordResetToken.getToken();
+        String resetUrl = "http://localhost:4200/reset-password/validate/" + passwordResetToken.getToken();
         model.put("user", user.getEmail());
         model.put("resetUrl", resetUrl);
 
@@ -77,8 +79,12 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
     @Override
     public ResponseEntity<String> resetPassword(String token, String newPassword) {
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .filter(t->!t.isExpired())
-                .orElseThrow(() -> new ResourceNotFoundException("Token invalido o expirado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Token no encontrado"));
+
+        if (resetToken.isExpired()) {
+            passwordResetTokenRepository.delete(resetToken);
+            return ResponseEntity.status(HttpStatus.GONE).body("Token expirado, vuelva a solicitar uno nuevo");
+        }
 
         User user = resetToken.getUser();
 
