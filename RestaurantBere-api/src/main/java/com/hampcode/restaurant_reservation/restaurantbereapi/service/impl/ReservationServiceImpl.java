@@ -576,30 +576,30 @@ public class ReservationServiceImpl implements ReservationService {
 
         // Validar la fecha de la reserva
         if (reservation.getDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
+            throw new IllegalArgumentException("La fecha de la reserva no debe ser menor a la actual");
         }
 
         if (reservationRequestDTO.getDate().isBefore(LocalDate.now())) {
-            throw new RuntimeException("La fecha de la reserva no debe ser menor a la actual");
+            throw new IllegalArgumentException("La fecha de la reserva no debe ser menor a la actual");
         }
 
 
         if (reservationRequestDTO.getDate().isBefore(LocalDate.now().plusDays(30))) {
-            throw new RuntimeException("Solo se puede reservar con 30 dias de anticipacion");
+            throw new IllegalArgumentException("Solo se puede reservar con 30 dias de anticipacion");
         }
 
         LocalDateTime localDateTime = LocalDateTime.of(reservationRequestDTO.getDate(), startTime);
 
         if (localDateTime.isBefore(LocalDateTime.now(ZoneId.of("America/Lima")))) {
-            throw new RuntimeException("La fecha y la Hora de la reserva no debe ser menor a la actual");
+            throw new IllegalArgumentException("La fecha y la Hora de la reserva no debe ser menor a la actual");
         }
 
         if (!startTime.equals(LocalTime.parse("12:00:00")) && !startTime.equals(LocalTime.parse("18:00:00"))) {
-            throw new RuntimeException("Solo puedes reservar a las 12 pm o a las 6 pm");
+            throw new IllegalArgumentException("Solo puedes reservar a las 12 pm o a las 6 pm");
         }
 
         if (startTime.isAfter(LocalTime.parse("23:00:00"))) {
-            throw new RuntimeException("El restaurante ya esta cerrado");
+            throw new IllegalArgumentException("El restaurante ya esta cerrado");
         }
 
         // Obtener el ID del usuario desde el JWT
