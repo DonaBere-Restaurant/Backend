@@ -1,9 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.AuthResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserProfileDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserRegisterDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 
 public interface UserService {
 
@@ -16,4 +13,6 @@ public interface UserService {
     AuthResponseDTO login(LoginDTO loginDTO);
 
     Integer getAuthenticatedUserIdFromJWT();
+
+    String updatePassword(Integer id, PasswordDTO passwordDTO);
 }

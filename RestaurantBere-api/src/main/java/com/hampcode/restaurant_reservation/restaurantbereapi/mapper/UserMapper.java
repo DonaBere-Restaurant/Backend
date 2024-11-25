@@ -1,9 +1,6 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.mapper;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.AuthResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserProfileDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserRegisterDTO;
+import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -65,5 +62,15 @@ public class UserMapper {
 
         return authResponseDTO;
     }
+
+    public PasswordDTO toPasswordDTO(User user) {
+        return modelMapper.map(user, PasswordDTO.class);
+    }
+
+    public User updateUserPassword(User user, PasswordDTO passwordDTO) {
+        user.setPassword(passwordDTO.getNewPassword());
+        return user;
+    }
+
 
 }
