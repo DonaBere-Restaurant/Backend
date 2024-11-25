@@ -82,7 +82,7 @@ public class ResenaServiceImpl implements ResenaService {
 
         // Guardar la reseña en la base de datos
         resenaRepository.save(resena);
-
+        reservationRespository.save(reservation);  // Guardar la reserva actualizada
         // Devolver el DTO de la reseña
         ResenaResponseDTO resenaResponseDTO = new ResenaResponseDTO();
         resenaResponseDTO.setId(resena.getId());
@@ -104,7 +104,6 @@ public class ResenaServiceImpl implements ResenaService {
                     dto.setId(resena.getId());
                     dto.setComentario(resena.getComentario());
                     dto.setCalificacion(resena.getCalificacion());
-                    dto.setReservationId(resena.getReservation().getId());
                     return dto;
                 })
                 .collect(Collectors.toList());
