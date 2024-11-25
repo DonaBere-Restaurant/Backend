@@ -45,6 +45,7 @@ public class WebSecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         // TODO: Permitir acceso público a las rutas de login, registro y endpoints públicos como Swagger UI
+                        .requestMatchers(antMatcher("/validation")).permitAll()
                         .requestMatchers(antMatcher("/auth/login")).permitAll()
                         .requestMatchers(antMatcher("/resena/all-resenas")).permitAll()
                         .requestMatchers(antMatcher("/auth/register/customer")).permitAll()
