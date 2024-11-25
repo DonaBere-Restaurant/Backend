@@ -89,7 +89,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         User user = resetToken.getUser();
 
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new IllegalArgumentException("La nueva contraseña no puede ser igual a la contraseña actual");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("La nueva contraseña no puede ser igual a la contraseña actual");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
