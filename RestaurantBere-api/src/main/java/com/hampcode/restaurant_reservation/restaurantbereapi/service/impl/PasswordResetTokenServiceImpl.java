@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,7 +35,18 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con email: " + email));
 
-        passwordResetTokenRepository.deleteByUser(user);
+        PasswordResetToken existingToken = passwordResetTokenRepository.findByUser(user).orElse(null);
+        if (existingToken != null) {
+            passwordResetTokenRepository.delete(existingToken);
+            passwordResetTokenRepository.flush(); // Fuerza la operacion de sincronizacion
+            System.out.println("Token anterior eliminado manualmente para el usuario: " + user.getEmail());
+
+            // Verifica que el token haya sido eliminado
+            boolean stillExists = passwordResetTokenRepository.findByUser(user).isPresent();
+            if (stillExists) {
+                throw new IllegalStateException("El token no se eliminó correctamente");
+            }
+        }
 
         PasswordResetToken passwordResetToken = new PasswordResetToken();
         passwordResetToken.setToken(UUID.randomUUID().toString());
@@ -95,6 +107,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         userRepository.save(user);
 
         passwordResetTokenRepository.delete(resetToken);
+        passwordResetTokenRepository.flush();
         return ResponseEntity.status(HttpStatus.OK).body("Contraseña restablecida exitosamente");
     }
 }
