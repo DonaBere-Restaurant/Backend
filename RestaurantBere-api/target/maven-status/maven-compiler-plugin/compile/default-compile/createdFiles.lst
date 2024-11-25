@@ -52,7 +52,6 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDishDTO.cla
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\ReservationServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\IzipayServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\UserServiceImpl.class
-com\hampcode\restaurant_reservation\restaurantbereapi\service\EmailService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\RestExceptionHandler.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResTableRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ResTableResponseDTO.class
@@ -90,6 +89,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\api\UserProfileController.
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ResenaService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\ReservationController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationRequestDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\service\EmailService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResenaRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\DishService.class
@@ -102,6 +102,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\CustomerResponse
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ReservationTableRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\ResenaController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\DishResponseDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\Integration\email\dto\Mail.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ReservationConfirmation.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\ResTableService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Dish.class

@@ -34,4 +34,5 @@ public interface ReservationService {
     public List<ReservationResponseDTO> getPayedReservations();
     public ReservationResponseDTO updateDateReservation(int reservationId,int customerId, LocalDate startDate, LocalTime startTime);
     Reservation getMostRecentReservationByCustomerId(int customerId);
+    public ReservationResponseDTO createReservationWithAllTable(ReservationRequestDTO reservationRequestDTO);
 }
