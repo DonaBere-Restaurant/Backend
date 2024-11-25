@@ -1,5 +1,4 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
-
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.*;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.*;
@@ -10,7 +9,6 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
 import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,9 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,6 +53,7 @@ public class ReservationController {
 
     @Autowired
     UserMapper userMapper;
+
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -162,7 +161,11 @@ public class ReservationController {
         ReservationResponseDTO responseDTO = mapper.convertToDTO(reservation);
         return ResponseEntity.ok(responseDTO);
     }
-
+    @PostMapping("/allTables")
+    public ResponseEntity<ReservationResponseDTO> reservaWithAlltables(@RequestBody ReservationRequestDTO reservationRequestDTO)
+    {
+        return new ResponseEntity<> (reservationService.createReservationWithAllTable(reservationRequestDTO),HttpStatus.CREATED);
+    }
 
     @PostMapping("/dia/mesas/menu")
     public ResponseEntity<?> reservationMenu(@RequestBody ReservationDishesRequestDTO reservationDishesRequestDTO) {
@@ -205,8 +208,9 @@ public class ReservationController {
             platos.add(order);
             totalPagar = (dish.getPrice()*quantity)+totalPagar;
         }
+        
+        existingReservation.setPriceTotal(existingReservation.getPriceTotal()+totalPagar);
 
-        existingReservation.setPriceTotal(totalPagar);
         existingReservation.setOrderDishes(platos);
 
         existingReservation = mapper.convertToEntity(reservationService.updateReservation(existingReservation.getId(), mapper.convertToRequestDTO(existingReservation)));

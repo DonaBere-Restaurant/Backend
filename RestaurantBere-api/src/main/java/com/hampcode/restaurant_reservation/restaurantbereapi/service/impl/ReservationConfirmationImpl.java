@@ -1,5 +1,4 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
-
 import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.dto.Mail;
 import com.hampcode.restaurant_reservation.restaurantbereapi.Integration.email.service.EmailService;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.OrderResponseDTO;
@@ -9,14 +8,12 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.service.Reservation
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class ReservationConfirmationImpl implements ReservationConfirmation {
-
     @Autowired
     private EmailService emailService;
 

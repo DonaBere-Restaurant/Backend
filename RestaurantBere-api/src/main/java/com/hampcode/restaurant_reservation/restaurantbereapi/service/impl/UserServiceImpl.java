@@ -9,6 +9,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Custom
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Role;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.User;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.CustomerRepository;
+import com.hampcode.restaurant_reservation.restaurantbereapi.repository.ResTableRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.RoleRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
