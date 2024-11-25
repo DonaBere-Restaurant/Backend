@@ -107,7 +107,6 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         userRepository.save(user);
 
         passwordResetTokenRepository.delete(resetToken);
-        passwordResetTokenRepository.flush();
         return ResponseEntity.status(HttpStatus.OK).body("Contraseña restablecida exitosamente");
     }
 }
