@@ -9,7 +9,9 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepo
 import com.hampcode.restaurant_reservation.restaurantbereapi.security.TokenProvider;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.*;
 import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = "https://restaurantbere-52059.web.app, http://localhost:4200")
 public class ReservationController {
     @Autowired
     ReservationService reservationService;
@@ -299,5 +301,17 @@ public class ReservationController {
         //} else {
         // return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);  // Si el usuario es un Customer, devolver 403 Forbidden
     }
+
+    @PutMapping("/updateDate/{reservationId}")
+    public ResponseEntity<ReservationResponseDTO> updateReservation(@PathVariable int reservationId,@Valid @RequestBody UpdateReservationRequestDTO dto)
+    {   int UserId= userService.getAuthenticatedUserIdFromJWT();
+        if(userService.getCustomerProfileById(UserId) == null)
+        {
+            throw new NullPointerException("No se ha encontrado el cliente.");
+        }
+        ReservationResponseDTO updatedReservation=  reservationService.updateDateReservation(reservationId,UserId,dto.getDate(),dto.getStartTime());
+        return new ResponseEntity<>(updatedReservation, HttpStatus.ACCEPTED);
+    }
+
 
 }
