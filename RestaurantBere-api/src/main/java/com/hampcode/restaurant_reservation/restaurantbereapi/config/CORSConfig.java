@@ -32,11 +32,17 @@ public class CORSConfig implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
-        // Agregar log para ver si la solicitud llega aquí
-        System.out.println("Request Method: " + request.getMethod());
+        // Lista de orígenes permitidos
+        String[] allowedOrigins = {
+                "https://restaurantbere-52059.web.app",
+                "http://localhost:4200"
+        };
 
-        // Configuración de CORS
-        response.setHeader("Access-Control-Allow-Origin", "https://restaurantbere-52059.web.app");
+        String origin = request.getHeader("Origin");
+        if (origin != null && isAllowedOrigin(origin, allowedOrigins)) {
+            response.setHeader("Access-Control-Allow-Origin", origin);
+        }
+
         response.setHeader("Access-Control-Allow-Methods", "DELETE, GET, OPTIONS, PATCH, POST, PUT");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN");
@@ -47,6 +53,16 @@ public class CORSConfig implements Filter {
             chain.doFilter(req, res);
         }
     }
+
+    private boolean isAllowedOrigin(String origin, String[] allowedOrigins) {
+        for (String allowedOrigin : allowedOrigins) {
+            if (allowedOrigin.equals(origin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public void destroy() {

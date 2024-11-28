@@ -24,6 +24,7 @@ public class ReservationResponseDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private List<ReservationTable> tables;
+    private int status;
     private List<OrderResponseDTO> orderDishes;
     private List<OrderDrinkResponseDTO> orderDrinks;
     private double priceTotal;

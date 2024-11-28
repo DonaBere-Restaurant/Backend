@@ -52,7 +52,7 @@ public class Reservation {
     @OneToMany(mappedBy ="reservation",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Order> orderDishes;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Resena resena;
 
     @Column(name = "res_sta_pay_bo", nullable = true)
