@@ -8,12 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="RestaurantBere-api" />
+        <module name="Bere-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="21" />
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Bere-api" options="-parameters" />
       <module name="RestaurantBere-api" options="-parameters" />
     </option>
   </component>
