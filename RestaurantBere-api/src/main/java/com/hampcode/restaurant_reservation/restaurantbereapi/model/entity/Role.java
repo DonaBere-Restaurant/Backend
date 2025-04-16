@@ -1,7 +1,10 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.model.entity;
 
 import jakarta.persistence.*;
+import jdk.jfr.Registered;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
@@ -15,4 +18,9 @@ public class Role {
 
     @Column(name = "rol_name", nullable = false, unique = true)
     private String name;
+
+    public Role(String roleAdmin) {
+    }
+    public Role() {
+    }
 }
