@@ -20,6 +20,7 @@ public class Role {
     private String name;
 
     public Role(String roleAdmin) {
+        this.name = roleAdmin;
     }
     public Role() {
     }
