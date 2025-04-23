@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/mail")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = "https://bere-frontend.s3.us-east-2.amazonaws.com")
 public class MailController {
 
     private final PasswordResetTokenService passwordResetTokenService;

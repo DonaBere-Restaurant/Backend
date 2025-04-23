@@ -18,7 +18,7 @@ import java.io.ByteArrayInputStream;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/pdf")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = "https://bere-frontend.s3.us-east-2.amazonaws.com")
 public class PdfController {
 
     private final PdfService pdfService;

@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://restaurantbere-52059.web.app")
+@CrossOrigin(origins = "https://bere-frontend.s3.us-east-2.amazonaws.com")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -39,7 +39,7 @@ public class PaypalController {
 
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
-        String returnUrl = "https://restaurantbere-52059.web.app/api/v1/admin/payments/payment";
+        String returnUrl = "https://bere-frontend.s3.us-east-2.amazonaws.com/api/v1/admin/payments/payment";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         try {
             String orderId = paypalService.createOrder(totalAmount, returnUrl, cancelUrl);
@@ -86,7 +86,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "https://bere-api.onrender.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        String returnUrl = "http://13.59.40.43:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {
@@ -129,7 +129,7 @@ public class PaypalController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://restaurantbere-52059.web.app/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            String redirectUrl = "https://bere-frontend.s3.us-east-2.amazonaws.com/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
