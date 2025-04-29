@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/validation")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://bere-frontend.s3.us-east-2.amazonaws.com")
+@CrossOrigin(origins = "http://bere-frontend.s3.us-east-2.amazonaws.com")
 public class ValidationController {
 
     private final UserRepository userRepository;

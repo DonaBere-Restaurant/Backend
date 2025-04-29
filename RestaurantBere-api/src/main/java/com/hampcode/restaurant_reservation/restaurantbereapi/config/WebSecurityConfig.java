@@ -94,7 +94,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://bere-frontend.s3.us-east-2.amazonaws.com")); // Dominios permitidos
+        configuration.setAllowedOrigins(List.of("http://bere-frontend.s3.us-east-2.amazonaws.com")); // Dominios permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setMaxAge(3600L); // Cache de preflight request
