@@ -3,6 +3,7 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.model.dto;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -27,4 +28,14 @@ public class UserRegisterDTO {
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, max = 20, message = "La contraseña debe tener entre 8 y 20 caracteres")
     private String password;
+
+    public UserRegisterDTO(String name, String lastname, String dni, String phone, String address, String email, String password) {
+        this.name = name;
+        this.lastname = lastname;
+        this.dni = dni;
+        this.phone = phone;
+        this.address = address;
+        this.email = email;
+        this.password = password;
+    }
 }
