@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PaypalServiceImpl implements PaypalService {
@@ -30,7 +31,7 @@ public class PaypalServiceImpl implements PaypalService {
         orderRequest.checkoutPaymentIntent("CAPTURE");
         List<PurchaseUnitRequest> purchaseUnits = new ArrayList<>();
 
-        PurchaseUnitRequest purchaseUnitRequest = new PurchaseUnitRequest().amountWithBreakdown(new AmountWithBreakdown().currencyCode(currency).value(String.format("%.2f", cost)));
+        PurchaseUnitRequest purchaseUnitRequest = new PurchaseUnitRequest().amountWithBreakdown(new AmountWithBreakdown().currencyCode(currency).value(String.format(Locale.US,"%.2f", cost)));
 
         purchaseUnits.add(purchaseUnitRequest);
 

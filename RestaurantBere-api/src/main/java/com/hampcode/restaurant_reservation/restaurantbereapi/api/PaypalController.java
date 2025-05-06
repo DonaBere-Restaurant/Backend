@@ -86,7 +86,7 @@ public class PaypalController {
         }
 
         // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "http://13.59.40.43:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        String returnUrl = "http://52.14.204.179:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {

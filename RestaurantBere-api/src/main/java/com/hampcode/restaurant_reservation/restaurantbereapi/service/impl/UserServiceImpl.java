@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserProfileDTO(user);
     }
 
-    private UserProfileDTO registerUserWithRole(UserRegisterDTO userRegisterDTO, Role role) {
+    public UserProfileDTO registerUserWithRole(UserRegisterDTO userRegisterDTO, Role role) {
         boolean existsByEmail = userRepository.existsByEmail(userRegisterDTO.getEmail());
         boolean existsByDni = customerRepository.existsByDni(userRegisterDTO.getDni());
         boolean existCustomer = customerRepository.existsByNameAndLastname(userRegisterDTO.getName(), userRegisterDTO.getLastname());
