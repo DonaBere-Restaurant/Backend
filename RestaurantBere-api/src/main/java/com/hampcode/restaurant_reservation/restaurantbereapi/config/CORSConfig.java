@@ -36,7 +36,7 @@ public class CORSConfig implements Filter {
         System.out.println("Request Method: " + request.getMethod());
 
         // Configuración de CORS
-        response.setHeader("Access-Control-Allow-Origin", "https://d1l6zgkey4sk0l.cloudfront.net");
+        response.setHeader("Access-Control-Allow-Origin", "https://d2pzaaz1ggtntr.cloudfront.net");
         response.setHeader("Access-Control-Allow-Methods", "DELETE, GET, OPTIONS, PATCH, POST, PUT");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, authorization, Content-Type, Authorization, credential, X-XSRF-TOKEN");

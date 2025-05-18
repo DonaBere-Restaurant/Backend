@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://d1l6zgkey4sk0l.cloudfront.net")
+@CrossOrigin(origins = "https://d2pzaaz1ggtntr.cloudfront.net")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -39,7 +39,7 @@ public class PaypalController {
 
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
-        String returnUrl = "https://d1l6zgkey4sk0l.cloudfront.net/api/v1/admin/payments/payment";
+        String returnUrl = "https://d2pzaaz1ggtntr.cloudfront.net/api/v1/admin/payments/payment";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         try {
             String orderId = paypalService.createOrder(totalAmount, returnUrl, cancelUrl);
@@ -129,7 +129,7 @@ public class PaypalController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://d1l6zgkey4sk0l.cloudfront.net/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            String redirectUrl = "https://d2pzaaz1ggtntr.cloudfront.net/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
