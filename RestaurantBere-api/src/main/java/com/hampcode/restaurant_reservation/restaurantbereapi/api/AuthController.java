@@ -15,17 +15,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://d2pzaaz1ggtntr.cloudfront.net")
+@CrossOrigin(origins = "https://d35t5x230gsu7i.cloudfront.net")
 public class AuthController {
 
     private final UserService userService;
-    @CrossOrigin(origins = "https://d2pzaaz1ggtntr.cloudfront.net")
+    @CrossOrigin(origins = "https://d35t5x230gsu7i.cloudfront.net")
     @PostMapping("/register/customer")
     public ResponseEntity<UserProfileDTO> registerCustomer(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
         UserProfileDTO userProfileDTO = userService.registerCustomer(userRegisterDTO);
         return new ResponseEntity<>(userProfileDTO, HttpStatus.CREATED);
     }
-    @CrossOrigin(origins = "https://d2pzaaz1ggtntr.cloudfront.net")
+    @CrossOrigin(origins = "https://d35t5x230gsu7i.cloudfront.net")
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         AuthResponseDTO authResponseDTO = userService.login(loginDTO);

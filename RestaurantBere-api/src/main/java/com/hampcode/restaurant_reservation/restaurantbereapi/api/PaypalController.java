@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://d2pzaaz1ggtntr.cloudfront.net")
+@CrossOrigin(origins = "https://d35t5x230gsu7i.cloudfront.net")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -39,7 +39,7 @@ public class PaypalController {
 
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
-        String returnUrl = "https://d2pzaaz1ggtntr.cloudfront.net/api/v1/admin/payments/payment";
+        String returnUrl = "https://d35t5x230gsu7i.cloudfront.net/api/v1/admin/payments/payment";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         try {
             String orderId = paypalService.createOrder(totalAmount, returnUrl, cancelUrl);
@@ -85,8 +85,8 @@ public class PaypalController {
             return ResponseEntity.badRequest().body(Map.of("message", "Reservacion no existente"));
         }
 
-        // Asegúrate de que el token se almacene después de la creación de la orden
-        String returnUrl = "http://18.224.237.139:8080/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        // el token se almacena después de la creación de la orden
+        String returnUrl = "https://9d0o67x3yj.execute-api.us-east-2.amazonaws.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {
@@ -129,7 +129,7 @@ public class PaypalController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://d2pzaaz1ggtntr.cloudfront.net/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            String redirectUrl = "https://d35t5x230gsu7i.cloudfront.net/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
