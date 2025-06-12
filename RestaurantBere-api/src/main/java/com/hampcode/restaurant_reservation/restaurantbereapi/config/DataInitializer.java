@@ -36,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
             roleRepository.save(admin);
             roleRepository.save(new Role("ROLE_CUSTOMER"));
 
-            UserRegisterDTO userDto = new UserRegisterDTO("","","","","","restaurantbere@gmail.com","123456789");
+            UserRegisterDTO userDto = new UserRegisterDTO("","","","","","restaurantbere@gmail.com","12345678");
             userService.registerUserWithRole(userDto,admin);
 
             for (int i = 1 ; i <= 15 ; i++)

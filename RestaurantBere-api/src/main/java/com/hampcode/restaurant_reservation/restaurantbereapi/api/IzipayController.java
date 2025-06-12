@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/izipay")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://d35t5x230gsu7i.cloudfront.net")
+@CrossOrigin(origins = "https://d31k5hcmt4zsv8.cloudfront.net")
 public class IzipayController {
 
     private final ReservationService reservationService;
@@ -40,7 +40,7 @@ public class IzipayController {
     @PostMapping("/create-payment-order")
     public IzipayOrderResponseDTO createPaymentOrder(@RequestParam Integer totalAmount) {
        UserProfileDTO userProfileDTO = userService.getCustomerProfileById(userService.getAuthenticatedUserIdFromJWT());
-        String successUrl = "https://d35t5x230gsu7i.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado";
+        String successUrl = "https://d31k5hcmt4zsv8.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         return izipayService.createOrder(totalAmount,userProfileDTO.getEmail(),successUrl,cancelUrl);
     }
@@ -150,7 +150,7 @@ public class IzipayController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://d35t5x230gsu7i.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado";
+            String redirectUrl = "https://d31k5hcmt4zsv8.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado";
             response.sendRedirect(redirectUrl);
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reserva);
