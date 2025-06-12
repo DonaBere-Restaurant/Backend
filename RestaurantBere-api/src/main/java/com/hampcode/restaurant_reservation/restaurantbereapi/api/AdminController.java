@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "https://d31k5hcmt4zsv8.cloudfront.net")
+@CrossOrigin(origins = "https://d1ct8aj9nbwjud.cloudfront.net")
 @AllArgsConstructor
 public class AdminController {
     private final ReservationService reservationService;
