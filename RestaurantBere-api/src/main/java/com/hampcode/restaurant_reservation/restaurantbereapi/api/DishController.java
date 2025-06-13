@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://d1ct8aj9nbwjud.cloudfront.net")
+@CrossOrigin(origins = "https://d1fkabchw0exe9.cloudfront.net")
 public class DishController {
 
     private final DishServiceImpl dishServiceImpl;

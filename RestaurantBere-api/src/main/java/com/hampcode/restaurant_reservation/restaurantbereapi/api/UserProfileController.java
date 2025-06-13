@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user/profile")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://d1ct8aj9nbwjud.cloudfront.net")
+@CrossOrigin(origins = "https://d1fkabchw0exe9.cloudfront.net")
 public class UserProfileController {
 
     private final UserService userService;
