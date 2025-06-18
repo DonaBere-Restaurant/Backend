@@ -34,10 +34,14 @@ public class DataInitializer implements CommandLineRunner {
         {   System.out.println("insertando datos");
             Role admin = new Role("ROLE_ADMIN");
             roleRepository.save(admin);
-            roleRepository.save(new Role("ROLE_CUSTOMER"));
+            Role customer=  new Role("ROLE_CUSTOMER");
+            roleRepository.save(customer);
 
             UserRegisterDTO userDto = new UserRegisterDTO("","","","","","restaurantbere@gmail.com","12345678");
             userService.registerUserWithRole(userDto,admin);
+
+            UserRegisterDTO clientDto = new UserRegisterDTO("javier","aguilar","72111167","123456789","calle 123","cliente@gmail.com","12345678");
+            userService.registerUserWithRole(clientDto,customer);
 
             for (int i = 1 ; i <= 15 ; i++)
             {
