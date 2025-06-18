@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("")
-@CrossOrigin(origins = "https://d1fkabchw0exe9.cloudfront.net")
+@CrossOrigin(origins = "https://d2rfn5wxvvezl5.cloudfront.net")
 public class ResTableController {
     @Autowired
     ResTableService resTableService;
