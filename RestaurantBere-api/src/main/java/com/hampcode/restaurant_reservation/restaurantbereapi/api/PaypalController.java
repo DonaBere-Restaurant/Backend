@@ -129,7 +129,7 @@ public class PaypalController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://d2rfn5wxvvezl5.cloudfront.net/reservasion/mesas/menu/datos/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            String redirectUrl = "https://d2rfn5wxvvezl5.cloudfront.net/reservacion/mesas/menu/drinks/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);
