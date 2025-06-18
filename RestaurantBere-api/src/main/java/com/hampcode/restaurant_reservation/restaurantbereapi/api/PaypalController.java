@@ -23,7 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("reservasion/dia/mesas/menu/datos")
-@CrossOrigin(origins = "https://d2rfn5wxvvezl5.cloudfront.net")
+@CrossOrigin(origins = "https://d3o7deqzqsefun.cloudfront.net")
 public class PaypalController {
     @Autowired
     public PaypalService paypalService;
@@ -39,7 +39,7 @@ public class PaypalController {
 
     @PostMapping("/create-order")
     public String  createOrder(@RequestParam double totalAmount) {
-        String returnUrl = "https://d2rfn5wxvvezl5.cloudfront.net/api/v1/admin/payments/payment";
+        String returnUrl = "https://d3o7deqzqsefun.cloudfront.net/api/v1/admin/payments/payment";
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         try {
             String orderId = paypalService.createOrder(totalAmount, returnUrl, cancelUrl);
@@ -86,7 +86,7 @@ public class PaypalController {
         }
 
         // el token se almacena después de la creación de la orden backendgzk
-        String returnUrl = "https://mkaduyaqy7.execute-api.us-east-2.amazonaws.com/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        String returnUrl = "https://zr8uc9132f.execute-api.us-east-2.amazonaws.com/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {
@@ -129,7 +129,7 @@ public class PaypalController {
         }
 
         if (successPayment) {
-            String redirectUrl = "https://d2rfn5wxvvezl5.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
+            String redirectUrl = "https://d3o7deqzqsefun.cloudfront.net/inicio/reservacion/mesas/menu/drinks/resumen/pago-completado"; // Cambia esto a la URL de tu frontend
             response.sendRedirect(redirectUrl); // Redirige al cliente
 
             ReservationResponseDTO reservationResponseDTO = reservationMapper.convertToDTO(reservation);

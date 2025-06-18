@@ -94,7 +94,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://d2rfn5wxvvezl5.cloudfront.net")); // Dominios permitidos
+        configuration.setAllowedOrigins(List.of("https://d3o7deqzqsefun.cloudfront.net")); // Dominios permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setMaxAge(3600L); // Cache de preflight request
