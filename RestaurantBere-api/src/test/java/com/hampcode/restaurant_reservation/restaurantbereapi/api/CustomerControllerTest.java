@@ -1,13 +1,14 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.CustomerMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomerResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.CustomerServiceImpl;
-import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.CustomerMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -15,13 +16,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-public class CustomerControllerTest {
+@WebMvcTest(CustomerController.class)
+@ExtendWith(MockitoExtension.class)
+class CustomerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,56 +31,68 @@ public class CustomerControllerTest {
     @MockBean
     private CustomerServiceImpl customerServiceimpl;
 
+    // Mock CustomerMapper as it's a constructor dependency, but not used in these specific methods
     @MockBean
     private CustomerMapper customerMapper;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
-    void testGetAllCustomers() throws Exception {
-        CustomerResponseDTO c1 = new CustomerResponseDTO();
-        c1.setId(1);
-        c1.setName("Ana");
+    void getAllCustomers_shouldReturnListOfCustomers() throws Exception {
+        // Given
+        CustomerResponseDTO customer1 = new CustomerResponseDTO(1L, "John", "Doe", "john.doe@example.com", "123456789");
+        CustomerResponseDTO customer2 = new CustomerResponseDTO(2L, "Jane", "Doe", "jane.doe@example.com", "987654321");
+        List<CustomerResponseDTO> customers = Arrays.asList(customer1, customer2);
 
-        CustomerResponseDTO c2 = new CustomerResponseDTO();
-        c2.setId(2);
-        c2.setName("Luis");
+        when(customerServiceimpl.getAllCustomers()).thenReturn(customers);
 
-        List<CustomerResponseDTO> list = Arrays.asList(c1, c2);
-        when(customerServiceimpl.getAllCustomers()).thenReturn(list);
-
-        mockMvc.perform(get("/customer"))
+        // When & Then
+        mockMvc.perform(get("/api/customers")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Ana"))
-                .andExpect(jsonPath("$[1].name").value("Luis"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()").value(customers.size()))
+                .andExpect(jsonPath("$[0].id").value(customer1.getId().intValue()))
+                .andExpect(jsonPath("$[0].firstName").value(customer1.getFirstName()))
+                .andExpect(jsonPath("$[1].id").value(customer2.getId().intValue()))
+                .andExpect(jsonPath("$[1].firstName").value(customer2.getFirstName()));
 
         verify(customerServiceimpl, times(1)).getAllCustomers();
     }
 
     @Test
-    void testGetCustomerById_Found() throws Exception {
-        CustomerResponseDTO customer = new CustomerResponseDTO();
-        customer.setId(1);
-        customer.setName("Pedro");
+    void getCustomerById_whenCustomerFound_shouldReturnCustomer() throws Exception {
+        // Given
+        int customerId = 1;
+        CustomerResponseDTO customer = new CustomerResponseDTO(1L, "John", "Doe", "john.doe@example.com", "123456789");
 
-        when(customerServiceimpl.getCustomerById(1)).thenReturn(customer);
+        when(customerServiceimpl.getCustomerById(customerId)).thenReturn(customer);
 
-        mockMvc.perform(get("/customer/1"))
+        // When & Then
+        mockMvc.perform(get("/api/customers/{id}", customerId)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Pedro"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(customer.getId().intValue()))
+                .andExpect(jsonPath("$.firstName").value(customer.getFirstName()));
 
-        verify(customerServiceimpl, times(1)).getCustomerById(1);
+        verify(customerServiceimpl, times(1)).getCustomerById(customerId);
     }
 
     @Test
-    void testGetCustomerById_NotFound() throws Exception {
-        when(customerServiceimpl.getCustomerById(99)).thenReturn(null);
+    void getCustomerById_whenCustomerNotFound_shouldReturnNotFoundMessage() throws Exception {
+        // Given
+        int customerId = 99; // An ID that is not expected to be found
+        when(customerServiceimpl.getCustomerById(customerId)).thenReturn(null);
 
-        mockMvc.perform(get("/customer/99"))
+        // When & Then
+        mockMvc.perform(get("/api/customers/{id}", customerId)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Cliente No Encontrado"));
 
-        verify(customerServiceimpl, times(1)).getCustomerById(99);
+        verify(customerServiceimpl, times(1)).getCustomerById(customerId);
     }
 }

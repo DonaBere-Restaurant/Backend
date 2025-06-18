@@ -1,84 +1,87 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.UserServiceImpl;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.AuthResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserProfileDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserRegisterDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-public class AuthControllerTest {
+@WebMvcTest(AuthController.class)
+@ExtendWith(MockitoExtension.class)
+class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private UserServiceImpl userService;
+    private UserService userService;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
-    void testRegisterCustomer() throws Exception {
-        UserRegisterDTO registerDTO = new UserRegisterDTO(
-                "Carlos", "Perez", "12345678", "987654321",
-                "Av. Siempre Viva", "carlos@example.com", "password123");
+    void registerCustomer_shouldReturnUserProfileAndStatusCreated() throws Exception {
+        // Given
+        UserRegisterDTO userRegisterDTO = new UserRegisterDTO(); // Populate with test data
+        userRegisterDTO.setEmail("test@example.com");
+        userRegisterDTO.setPassword("password");
+        userRegisterDTO.setFirstName("Test");
+        userRegisterDTO.setLastName("User");
 
-        UserProfileDTO profileDTO = new UserProfileDTO();
-        profileDTO.setName("Carlos");
-        profileDTO.setLastname("Perez");
-        profileDTO.setEmail("carlos@example.com");
-        profileDTO.setDni("12345678");
-        profileDTO.setPhone("987654321");
-        profileDTO.setAddress("Av. Siempre Viva");
+        UserProfileDTO userProfileDTO = new UserProfileDTO(); // Populate with expected data
+        userProfileDTO.setId(1L);
+        userProfileDTO.setEmail(userRegisterDTO.getEmail());
+        userProfileDTO.setFirstName(userRegisterDTO.getFirstName());
+        userProfileDTO.setLastName(userRegisterDTO.getLastName());
 
-        when(userService.registerCustomer(registerDTO)).thenReturn(profileDTO);
+        when(userService.registerCustomer(any(UserRegisterDTO.class))).thenReturn(userProfileDTO);
 
-        mockMvc.perform(post("/auth/register/customer")
+        // When & Then
+        mockMvc.perform(post("/api/auth/register/customer")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(registerDTO)))
+                .content(objectMapper.writeValueAsString(userRegisterDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Carlos"))
-                .andExpect(jsonPath("$.lastname").value("Perez"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(userProfileDTO.getId().intValue()))
+                .andExpect(jsonPath("$.email").value(userProfileDTO.getEmail()))
+                .andExpect(jsonPath("$.firstName").value(userProfileDTO.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(userProfileDTO.getLastName()));
 
-        verify(userService, times(1)).registerCustomer(registerDTO);
+        verify(userService, times(1)).registerCustomer(any(UserRegisterDTO.class));
     }
 
     @Test
-    void testLogin() throws Exception {
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail("carlos@example.com");
-        loginDTO.setPassword("password123");
+    void login_shouldReturnAuthResponseAndStatusOk() throws Exception {
+        // Given
+        LoginDTO loginDTO = new LoginDTO("test@example.com", "password");
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO("test@example.com", "mockToken", "mockRefreshToken");
 
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO();
-        authResponseDTO.setId(1);
-        authResponseDTO.setName("Carlos");
-        authResponseDTO.setDni("12345678");
-        authResponseDTO.setRole("USER");
-        authResponseDTO.setToken("fake-jwt-token");
+        when(userService.login(any(LoginDTO.class))).thenReturn(authResponseDTO);
 
-        when(userService.login(loginDTO)).thenReturn(authResponseDTO);
-
-        mockMvc.perform(post("/auth/login")
+        // When & Then
+        mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Carlos"))
-                .andExpect(jsonPath("$.token").value("fake-jwt-token"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.email").value(authResponseDTO.getEmail()))
+                .andExpect(jsonPath("$.token").value(authResponseDTO.getToken()))
+                .andExpect(jsonPath("$.refreshToken").value(authResponseDTO.getRefreshToken()));
 
-        verify(userService, times(1)).login(loginDTO);
+        verify(userService, times(1)).login(any(LoginDTO.class));
     }
 }
