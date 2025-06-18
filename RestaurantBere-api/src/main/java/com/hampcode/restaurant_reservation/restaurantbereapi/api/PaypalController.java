@@ -85,8 +85,8 @@ public class PaypalController {
             return ResponseEntity.badRequest().body(Map.of("message", "Reservacion no existente"));
         }
 
-        // el token se almacena después de la creación de la orden
-        String returnUrl = "https://9d0o67x3yj.execute-api.us-east-2.amazonaws.com/api/v1/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        // el token se almacena después de la creación de la orden backendgzk
+        String returnUrl = "https://mkaduyaqy7.execute-api.us-east-2.amazonaws.com/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {
