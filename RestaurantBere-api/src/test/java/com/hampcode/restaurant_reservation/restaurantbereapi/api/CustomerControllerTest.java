@@ -42,22 +42,30 @@ class CustomerControllerTest {
     @Test
     void getAllCustomers_shouldReturnListOfCustomers() throws Exception {
         // Given
-        CustomerResponseDTO customer1 = new CustomerResponseDTO(1L, "John", "Doe", "john.doe@example.com", "123456789");
-        CustomerResponseDTO customer2 = new CustomerResponseDTO(2L, "Jane", "Doe", "jane.doe@example.com", "987654321");
+        CustomerResponseDTO customer1 = new CustomerResponseDTO();
+        customer1.setId(1);
+        customer1.setName("John");
+        customer1.setEmail("john.doe@example.com");
+        customer1.setPhone("123456789");
+        CustomerResponseDTO customer2 = new CustomerResponseDTO();
+        customer2.setId(2);
+        customer2.setName("Jane");
+        customer2.setEmail("jane.doe@example.com");
+        customer2.setPhone("987654321");
         List<CustomerResponseDTO> customers = Arrays.asList(customer1, customer2);
 
         when(customerServiceimpl.getAllCustomers()).thenReturn(customers);
 
         // When & Then
         mockMvc.perform(get("/api/customers")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(customers.size()))
-                .andExpect(jsonPath("$[0].id").value(customer1.getId().intValue()))
-                .andExpect(jsonPath("$[0].firstName").value(customer1.getFirstName()))
-                .andExpect(jsonPath("$[1].id").value(customer2.getId().intValue()))
-                .andExpect(jsonPath("$[1].firstName").value(customer2.getFirstName()));
+                .andExpect(jsonPath("$[0].id").value(customer1.getId()))
+                .andExpect(jsonPath("$[0].firstName").value(customer1.getName()))
+                .andExpect(jsonPath("$[1].id").value(customer2.getId()))
+                .andExpect(jsonPath("$[1].firstName").value(customer2.getName()));
 
         verify(customerServiceimpl, times(1)).getAllCustomers();
     }
@@ -66,17 +74,17 @@ class CustomerControllerTest {
     void getCustomerById_whenCustomerFound_shouldReturnCustomer() throws Exception {
         // Given
         int customerId = 1;
-        CustomerResponseDTO customer = new CustomerResponseDTO(1L, "John", "Doe", "john.doe@example.com", "123456789");
+        CustomerResponseDTO customer = new CustomerResponseDTO();
 
         when(customerServiceimpl.getCustomerById(customerId)).thenReturn(customer);
 
         // When & Then
         mockMvc.perform(get("/api/customers/{id}", customerId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(customer.getId().intValue()))
-                .andExpect(jsonPath("$.firstName").value(customer.getFirstName()));
+                .andExpect(jsonPath("$.id").value(customer.getId()))
+                .andExpect(jsonPath("$.firstName").value(customer));
 
         verify(customerServiceimpl, times(1)).getCustomerById(customerId);
     }
@@ -89,7 +97,7 @@ class CustomerControllerTest {
 
         // When & Then
         mockMvc.perform(get("/api/customers/{id}", customerId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Cliente No Encontrado"));
 

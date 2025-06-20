@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,25 +37,30 @@ class AdminControllerTest {
     void getPayedReservations_shouldReturnListOfReservations() throws Exception {
         // Given
         ReservationResponseDTO reservation1 = new ReservationResponseDTO(); // Populate with test data
-        reservation1.setId(1L);
-        reservation1.setReservationNumber("RES001");
+        reservation1.setId(1);
+        reservation1.setName("John Doe");
+        reservation1.setDate(LocalDate.now().plusDays(1));
+
         ReservationResponseDTO reservation2 = new ReservationResponseDTO(); // Populate with test data
-        reservation2.setId(2L);
-        reservation2.setReservationNumber("RES002");
+        reservation2.setId(2);
+        reservation2.setId(2);
+        reservation2.setName("Jane Smith");
+        reservation2.setDate(LocalDate.now().plusDays(2));
+
         List<ReservationResponseDTO> payedReservations = Arrays.asList(reservation1, reservation2);
 
         when(reservationService.getPayedReservations()).thenReturn(payedReservations);
 
         // When & Then
         mockMvc.perform(get("/api/admin/payed-reservations")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(payedReservations.size()))
-                .andExpect(jsonPath("$[0].id").value(reservation1.getId().intValue()))
-                .andExpect(jsonPath("$[0].reservationNumber").value(reservation1.getReservationNumber()))
-                .andExpect(jsonPath("$[1].id").value(reservation2.getId().intValue()))
-                .andExpect(jsonPath("$[1].reservationNumber").value(reservation2.getReservationNumber()));
+                .andExpect(jsonPath("$[0].id").value(reservation1.getId()))
+                .andExpect(jsonPath("$[0].name").value(reservation1.getName()))
+                .andExpect(jsonPath("$[1].id").value(reservation2.getId()))
+                .andExpect(jsonPath("$[1].name").value(reservation2.getName()));
 
         verify(reservationService, times(1)).getPayedReservations();
     }
@@ -67,7 +73,7 @@ class AdminControllerTest {
 
         // When & Then
         mockMvc.perform(put("/api/admin/reservations/{id}/refund", reservationId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Refund status changed successfully for reservation " + reservationId));
 

@@ -47,14 +47,14 @@ class DrinkControllerTest {
 
     @Test
     void getAllDrinks_shouldReturnListOfDrinks() throws Exception {
-        DrinkResponseDTO drink1 = new DrinkResponseDTO(1, "Drink1", "Description1", 5.0, "image1.jpg", "Category1");
-        DrinkResponseDTO drink2 = new DrinkResponseDTO(2, "Drink2", "Description2", 6.0, "image2.jpg", "Category2");
+        DrinkResponseDTO drink1 = new DrinkResponseDTO(1, "Drink1", "Description1", 5.0, "image1.jpg");
+        DrinkResponseDTO drink2 = new DrinkResponseDTO(2, "Drink2", "Description2", 6.0, "image2.jpg");
         List<DrinkResponseDTO> drinks = Arrays.asList(drink1, drink2);
 
         when(drinkService.getAllDrinks()).thenReturn(drinks);
 
         mockMvc.perform(get("/api/drinks")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(drinks.size()))
                 .andExpect(jsonPath("$[0].name").value("Drink1"));
@@ -64,11 +64,11 @@ class DrinkControllerTest {
 
     @Test
     void getDrinkById_shouldReturnDrink() throws Exception {
-        DrinkResponseDTO drink = new DrinkResponseDTO(1, "Drink1", "Description1", 5.0, "image1.jpg", "Category1");
+        DrinkResponseDTO drink = new DrinkResponseDTO(1, "Drink1", "Description1", 5.0, "image1.jpg");
         when(drinkService.getDrinkById(1)).thenReturn(drink);
 
         mockMvc.perform(get("/api/drinks/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Drink1"));
 
@@ -77,8 +77,10 @@ class DrinkControllerTest {
 
     @Test
     void createDrink_whenSuccess_shouldReturnCreatedMessage() throws Exception {
-        DrinkRequestDTO requestDTO = new DrinkRequestDTO("New Drink", "New Description", 7.0, "CategoryNew");
-        DrinkResponseDTO responseDTO = new DrinkResponseDTO(1, "New Drink", "New Description", 7.0, "new_image.jpg", "CategoryNew");
+        MockMultipartFile imageFile = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DrinkRequestDTO requestDTO = new DrinkRequestDTO("New Drink", "New Description", 7.0, imageFile);
+        DrinkResponseDTO responseDTO = new DrinkResponseDTO(1, "New Drink", "New Description", 7.0, "new_image.jpg");
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
 
         when(uploadFileService.copy(any())).thenReturn("new_image.jpg");
@@ -89,7 +91,6 @@ class DrinkControllerTest {
                         .param("name", requestDTO.getName())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Bebida creada correctamente"));
@@ -100,7 +101,9 @@ class DrinkControllerTest {
 
     @Test
     void createDrink_whenException_shouldReturnInternalServerError() throws Exception {
-        DrinkRequestDTO requestDTO = new DrinkRequestDTO("New Drink", "New Description", 7.0, "CategoryNew");
+        MockMultipartFile imageFile = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DrinkRequestDTO requestDTO = new DrinkRequestDTO("New Drink", "New Description", 7.0, imageFile);
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
         String errorMessage = "Test error";
 
@@ -112,7 +115,6 @@ class DrinkControllerTest {
                         .param("name", requestDTO.getName())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().string(errorMessage));
@@ -122,8 +124,9 @@ class DrinkControllerTest {
 
     @Test
     void updateDrink_shouldReturnUpdatedDrink() throws Exception {
-        DrinkRequestDTO requestDTO = new DrinkRequestDTO("Updated Drink", "Updated Description", 8.0, "CategoryUpdated");
-        DrinkResponseDTO responseDTO = new DrinkResponseDTO(1, "Updated Drink", "Updated Description", 8.0, "image.jpg", "CategoryUpdated");
+        MockMultipartFile imageFile = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
+        DrinkRequestDTO requestDTO = new DrinkRequestDTO("Updated Drink", "Updated Description", 8.0, imageFile);
+        DrinkResponseDTO responseDTO = new DrinkResponseDTO(1, "Updated Drink", "Updated Description", 8.0, "image.jpg");
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
 
         when(drinkService.updateDrink(eq(1), any(DrinkRequestDTO.class))).thenReturn(responseDTO);
@@ -135,7 +138,6 @@ class DrinkControllerTest {
                         .param("name", requestDTO.getName())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .with(req -> { req.setMethod("PUT"); return req; })
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -149,7 +151,7 @@ class DrinkControllerTest {
         doNothing().when(drinkService).deleteDrink(1);
 
         mockMvc.perform(delete("/api/drinks/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Bebida eliminada correctamente"));
 

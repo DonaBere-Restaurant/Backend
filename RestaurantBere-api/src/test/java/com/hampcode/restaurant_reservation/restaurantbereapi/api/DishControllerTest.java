@@ -46,14 +46,14 @@ class DishControllerTest {
 
     @Test
     void getAllDishes_shouldReturnListOfDishes() throws Exception {
-        DishResponseDTO dish1 = new DishResponseDTO(1, "Dish1", "Description1", 10.0, "image1.jpg", "Category1");
-        DishResponseDTO dish2 = new DishResponseDTO(2, "Dish2", "Description2", 12.0, "image2.jpg", "Category2");
+        DishResponseDTO dish1 = new DishResponseDTO(1, "Dish1", "Description1", 10.0, "image1.jpg");
+        DishResponseDTO dish2 = new DishResponseDTO(2, "Dish2", "Description2", 12.0, "image2.jpg");
         List<DishResponseDTO> dishes = Arrays.asList(dish1, dish2);
 
         when(dishService.getAllDishes()).thenReturn(dishes);
 
         mockMvc.perform(get("/api/dishes")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(dishes.size()))
                 .andExpect(jsonPath("$[0].name").value("Dish1"));
@@ -63,11 +63,11 @@ class DishControllerTest {
 
     @Test
     void getDishById_whenFound_shouldReturnDish() throws Exception {
-        DishResponseDTO dish = new DishResponseDTO(1, "Dish1", "Description1", 10.0, "image1.jpg", "Category1");
+        DishResponseDTO dish = new DishResponseDTO(1, "Dish1", "Description1", 10.0, "image1.jpg");
         when(dishService.getDishById(1)).thenReturn(dish);
 
         mockMvc.perform(get("/api/dishes/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Dish1"));
 
@@ -79,7 +79,7 @@ class DishControllerTest {
         when(dishService.getDishById(1)).thenReturn(null);
 
         mockMvc.perform(get("/api/dishes/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Plato no Encontrado"));
 
@@ -88,8 +88,10 @@ class DishControllerTest {
 
     @Test
     void createDish_whenSuccess_shouldReturnCreatedMessage() throws Exception {
-        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, "CategoryNew");
-        DishResponseDTO responseDTO = new DishResponseDTO(1, "New Dish", "New Description", 15.0, "new_image.jpg", "CategoryNew");
+        MockMultipartFile imageFile = new MockMultipartFile("image", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, imageFile);
+        DishResponseDTO responseDTO = new DishResponseDTO(1, "New Dish", "New Description", 15.0, "new_image.jpg");
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
 
         when(dishService.createDish(any(DishRequestDTO.class))).thenReturn(responseDTO);
@@ -98,10 +100,9 @@ class DishControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/dishes")
                         .file(file)
-                        .param("name", requestDTO.getName())
+                        .param("name", requestDTO.getTitle())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Plato creado correctamente"));
@@ -113,7 +114,9 @@ class DishControllerTest {
 
     @Test
     void createDish_whenIllegalArgumentException_shouldReturnBadRequest() throws Exception {
-        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, "CategoryNew");
+        MockMultipartFile imageFile = new MockMultipartFile("image", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, imageFile);
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
         String errorMessage = "Illegal argument";
 
@@ -122,10 +125,9 @@ class DishControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/dishes")
                         .file(file)
-                        .param("name", requestDTO.getName())
+                        .param("name", requestDTO.getTitle())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(errorMessage));
@@ -135,7 +137,9 @@ class DishControllerTest {
 
     @Test
     void createDish_whenRuntimeException_shouldReturnBadRequest() throws Exception {
-        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, "CategoryNew");
+        MockMultipartFile imageFile = new MockMultipartFile("image", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DishRequestDTO requestDTO = new DishRequestDTO("New Dish", "New Description", 15.0, imageFile);
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
         String errorMessage = "Runtime exception";
 
@@ -144,10 +148,9 @@ class DishControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/dishes")
                         .file(file)
-                        .param("name", requestDTO.getName())
+                        .param("name", requestDTO.getTitle())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(errorMessage));
@@ -157,8 +160,10 @@ class DishControllerTest {
 
     @Test
     void updateDish_shouldReturnUpdatedDish() throws Exception {
-        DishRequestDTO requestDTO = new DishRequestDTO("Updated Dish", "Updated Description", 18.0, "CategoryUpdated");
-        DishResponseDTO responseDTO = new DishResponseDTO(1, "Updated Dish", "Updated Description", 18.0, "image.jpg", "CategoryUpdated");
+        MockMultipartFile imageFile = new MockMultipartFile("image", "filename.jpg", "image/jpeg", "some image".getBytes());
+
+        DishRequestDTO requestDTO = new DishRequestDTO("Updated Dish", "Updated Description", 18.0, imageFile);
+        DishResponseDTO responseDTO = new DishResponseDTO(1, "Updated Dish", "Updated Description", 18.0, "image.jpg");
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpg", "image/jpeg", "some image".getBytes());
 
         when(dishService.updateDish(eq(1), any(DishRequestDTO.class))).thenReturn(responseDTO);
@@ -169,10 +174,9 @@ class DishControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.multipart("/api/dishes/{id}", 1)
                         .file(file) // Or don't send file if it's optional for update
-                        .param("name", requestDTO.getName())
+                        .param("name", requestDTO.getTitle())
                         .param("description", requestDTO.getDescription())
                         .param("price", String.valueOf(requestDTO.getPrice()))
-                        .param("categoryName", requestDTO.getCategoryName())
                         .with(req -> { req.setMethod("PUT"); return req; }) // Important for multipart PUT
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
@@ -187,7 +191,7 @@ class DishControllerTest {
         doNothing().when(dishService).deleteDish(1);
 
         mockMvc.perform(delete("/api/dishes/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Plato eliminado"));
 

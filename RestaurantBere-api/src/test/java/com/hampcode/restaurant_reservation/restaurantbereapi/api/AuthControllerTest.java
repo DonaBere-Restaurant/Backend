@@ -39,27 +39,27 @@ class AuthControllerTest {
         UserRegisterDTO userRegisterDTO = new UserRegisterDTO(); // Populate with test data
         userRegisterDTO.setEmail("test@example.com");
         userRegisterDTO.setPassword("password");
-        userRegisterDTO.setFirstName("Test");
-        userRegisterDTO.setLastName("User");
+        userRegisterDTO.setName("Test");
+        userRegisterDTO.setLastname("User");
 
         UserProfileDTO userProfileDTO = new UserProfileDTO(); // Populate with expected data
-        userProfileDTO.setId(1L);
+        userProfileDTO.setId(1);
         userProfileDTO.setEmail(userRegisterDTO.getEmail());
-        userProfileDTO.setFirstName(userRegisterDTO.getFirstName());
-        userProfileDTO.setLastName(userRegisterDTO.getLastName());
+        userProfileDTO.setName(userRegisterDTO.getName());
+        userProfileDTO.setLastname(userRegisterDTO.getLastname());
 
         when(userService.registerCustomer(any(UserRegisterDTO.class))).thenReturn(userProfileDTO);
 
         // When & Then
         mockMvc.perform(post("/api/auth/register/customer")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userRegisterDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userRegisterDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(userProfileDTO.getId().intValue()))
                 .andExpect(jsonPath("$.email").value(userProfileDTO.getEmail()))
-                .andExpect(jsonPath("$.firstName").value(userProfileDTO.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(userProfileDTO.getLastName()));
+                .andExpect(jsonPath("$.firstName").value(userProfileDTO.getName()))
+                .andExpect(jsonPath("$.lastName").value(userProfileDTO.getLastname()));
 
         verify(userService, times(1)).registerCustomer(any(UserRegisterDTO.class));
     }
@@ -68,19 +68,20 @@ class AuthControllerTest {
     void login_shouldReturnAuthResponseAndStatusOk() throws Exception {
         // Given
         LoginDTO loginDTO = new LoginDTO("test@example.com", "password");
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO("test@example.com", "mockToken", "mockRefreshToken");
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO();
+        authResponseDTO.setName("Test");
+        authResponseDTO.setToken("mockToken");
 
         when(userService.login(any(LoginDTO.class))).thenReturn(authResponseDTO);
 
         // When & Then
         mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.email").value(authResponseDTO.getEmail()))
-                .andExpect(jsonPath("$.token").value(authResponseDTO.getToken()))
-                .andExpect(jsonPath("$.refreshToken").value(authResponseDTO.getRefreshToken()));
+                .andExpect(jsonPath("$.email").value(authResponseDTO.getName()))
+                .andExpect(jsonPath("$.token").value(authResponseDTO.getToken()));
 
         verify(userService, times(1)).login(any(LoginDTO.class));
     }
