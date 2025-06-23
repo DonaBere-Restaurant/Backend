@@ -86,7 +86,7 @@ public class PaypalController {
         }
 
         // el token se almacena después de la creación de la orden backendgzk
-        String returnUrl = "https://zr8uc9132f.execute-api.us-east-2.amazonaws.com/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
+        String returnUrl = "https://wg0fg5haec.execute-api.us-east-2.amazonaws.com/reservasion/dia/mesas/menu/datos/pay-reservation/success?reserva="+ ((Integer)reservation.getId()).toString();
         String cancelUrl = "https://blog.fluidui.com/top-404-error-page-examples/";
         double totalpagar = reservation.getPriceTotal();
         try {
