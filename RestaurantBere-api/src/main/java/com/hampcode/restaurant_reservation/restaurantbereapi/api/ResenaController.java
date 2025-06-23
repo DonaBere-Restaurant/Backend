@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/resena")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://d3o7deqzqsefun.cloudfront.net")
+@CrossOrigin(origins = "https://d2czojan5a234n.cloudfront.net")
 public class ResenaController {
 
 

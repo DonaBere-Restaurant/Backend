@@ -21,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/customer")
 @AllArgsConstructor
-@CrossOrigin(origins = "https://d3o7deqzqsefun.cloudfront.net")
+@CrossOrigin(origins = "https://d2czojan5a234n.cloudfront.net")
 public class CustomerController {
     @Autowired
     private final CustomerServiceImpl customerServiceimpl;

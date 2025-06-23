@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reservasion")
-@CrossOrigin(origins = "https://d3o7deqzqsefun.cloudfront.net")
+@CrossOrigin(origins = "https://d2czojan5a234n.cloudfront.net")
 public class ReservationController {
 
     @Autowired
