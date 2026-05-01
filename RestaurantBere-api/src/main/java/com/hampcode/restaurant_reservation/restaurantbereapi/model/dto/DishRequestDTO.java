@@ -26,4 +26,6 @@ public class DishRequestDTO {
 
     @NotNull(message = "El archivo de la imagen no puede estar vacia")
     private MultipartFile image;
+
+    private int stock;
 }

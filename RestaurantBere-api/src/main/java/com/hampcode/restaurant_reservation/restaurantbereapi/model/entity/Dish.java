@@ -31,4 +31,7 @@ public class Dish {
 
     @Column(name = "dis_img_var")
     private String image;
+
+    @Column(name = "dis_sto_in")
+    private int stock;
 }
