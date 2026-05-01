@@ -60,6 +60,7 @@ public class DishServiceImpl implements DishService {
         if (dishRequestDTO.getTitle() != null) dish.setTitle(dishRequestDTO.getTitle());
         if (dishRequestDTO.getDescription() != null) dish.setDescription(dishRequestDTO.getDescription());
         if (dishRequestDTO.getPrice() != 0) dish.setPrice(dishRequestDTO.getPrice());
+        dish.setStock(dishRequestDTO.getStock());
 
         if (dishRequestDTO.getImage() != null) {
             try {

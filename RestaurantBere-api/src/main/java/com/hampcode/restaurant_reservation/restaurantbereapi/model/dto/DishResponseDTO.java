@@ -13,4 +13,5 @@ public class DishResponseDTO {
     private String description;
     private double price;
     private String image;
+    private int stock;
 }
