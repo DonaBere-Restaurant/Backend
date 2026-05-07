@@ -7,6 +7,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRespo
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.DishRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.DishService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.IUploadFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class DishServiceImpl implements DishService {
 
     private final DishRepository dishRepository;
     private final DishMapper dishMapper;
-    private final IUploadFileServiceImpl uploadFileService;
+    private final IUploadFileService uploadFileService;
 
 
     @Transactional(readOnly = true)
@@ -40,7 +41,7 @@ public class DishServiceImpl implements DishService {
         String imagePath;
 
         try {
-            imagePath = uploadFileService.copy(dishRequestDTO.getImage());
+            imagePath = uploadFileService.copy(dishRequestDTO.getImage(), "admin/dish");
         } catch (IOException e){
             throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
         }
@@ -64,7 +65,7 @@ public class DishServiceImpl implements DishService {
 
         if (dishRequestDTO.getImage() != null) {
             try {
-                String imagePath = uploadFileService.copy(dishRequestDTO.getImage());
+                String imagePath = uploadFileService.copy(dishRequestDTO.getImage(), "admin/dish");
                 dish.setImage(imagePath);
             } catch (IOException e) {
                 throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);

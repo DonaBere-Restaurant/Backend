@@ -6,6 +6,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DrinkResp
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Drink;
 import com.hampcode.restaurant_reservation.restaurantbereapi.repository.DrinkRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.DrinkService;
+import com.hampcode.restaurant_reservation.restaurantbereapi.service.IUploadFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ public class DrinkServiceImpl implements DrinkService {
 
     private final DrinkRepository drinkRepository;
     private final DrinkMapper drinkMapper;
-    private final IUploadFileServiceImpl uploadFileService;
+    private final IUploadFileService uploadFileService;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,7 +42,7 @@ public class DrinkServiceImpl implements DrinkService {
     public DrinkResponseDTO createDrink(DrinkRequestDTO drinkRequestDTO) {
         String imagePath;
         try {
-            imagePath = uploadFileService.copy(drinkRequestDTO.getImage());
+            imagePath = uploadFileService.copy(drinkRequestDTO.getImage(), "admin/drink");
         } catch (IOException e){
             throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
         }
@@ -63,7 +64,7 @@ public class DrinkServiceImpl implements DrinkService {
         drink.setStock(drinkRequestDTO.getStock());
         if(drinkRequestDTO.getImage()!= null){
             try{
-                String imagePath = uploadFileService.copy(drinkRequestDTO.getImage());
+                String imagePath = uploadFileService.copy(drinkRequestDTO.getImage(), "admin/drink");
                 drink.setImage(imagePath);
             } catch (IOException e){
                 throw new RuntimeException("Error al cargar la imagen: " + e.getMessage(), e);
