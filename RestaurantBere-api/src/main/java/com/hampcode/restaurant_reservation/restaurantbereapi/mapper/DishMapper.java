@@ -5,6 +5,7 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRespo
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,6 +16,12 @@ public class DishMapper {
 
     private final ModelMapper modelMapper;
 
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+
+    @Value("${supabase.bucket}")
+    private String supabaseBucket;
+
     public Dish convertToEntity(DishRequestDTO dishRequestDTO){
         return  modelMapper.map(dishRequestDTO, Dish.class);
     }
@@ -24,12 +31,29 @@ public class DishMapper {
     }
 
     public DishResponseDTO convertToDTO(Dish dish){
-        return modelMapper.map(dish, DishResponseDTO.class);
+        DishResponseDTO dto = modelMapper.map(dish, DishResponseDTO.class);
+        dto.setImage(resolveImageUrl(dto.getImage(), "admin/dish"));
+        return dto;
     }
 
     public List<DishResponseDTO> convertToListDTO(List<Dish> dish){
         return dish.stream()
                 .map(this::convertToDTO)
                 .toList();
+    }
+
+    private String resolveImageUrl(String image, String folder) {
+        if (image == null || image.isBlank()) {
+            return image;
+        }
+        String trimmed = image.trim();
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            return trimmed;
+        }
+        String base = supabaseUrl.trim() + "/storage/v1/object/public/" + supabaseBucket + "/";
+        if (trimmed.startsWith("admin/")) {
+            return base + trimmed;
+        }
+        return base + folder + "/" + trimmed;
     }
 }
