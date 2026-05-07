@@ -1,6 +1,5 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.service.impl;
 
-import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.DishMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.DrinkMapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DrinkRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DrinkResponseDTO;
@@ -61,6 +60,7 @@ public class DrinkServiceImpl implements DrinkService {
         if(drinkRequestDTO.getName()!= null) drink.setName(drinkRequestDTO.getName());
         if(drinkRequestDTO.getDescription()!= null) drink.setDescription(drinkRequestDTO.getDescription());
         if(drinkRequestDTO.getPrice()!= 0) drink.setPrice(drinkRequestDTO.getPrice());
+        drink.setStock(drinkRequestDTO.getStock());
         if(drinkRequestDTO.getImage()!= null){
             try{
                 String imagePath = uploadFileService.copy(drinkRequestDTO.getImage());

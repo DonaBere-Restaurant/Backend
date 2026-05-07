@@ -23,4 +23,5 @@ public class DrinkRequestDTO {
     @NotBlank(message = "La imagen del bebida no puede estar vacia")
     private MultipartFile image;
 
+    private int stock;
 }

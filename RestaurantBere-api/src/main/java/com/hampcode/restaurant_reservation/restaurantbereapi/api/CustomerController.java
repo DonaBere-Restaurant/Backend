@@ -1,22 +1,15 @@
 package com.hampcode.restaurant_reservation.restaurantbereapi.api;
 
 import com.hampcode.restaurant_reservation.restaurantbereapi.mapper.CustomerMapper;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomerRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.CustomerResponseDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginRequestDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Customer;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.CustomerRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.impl.CustomerServiceImpl;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/customer")

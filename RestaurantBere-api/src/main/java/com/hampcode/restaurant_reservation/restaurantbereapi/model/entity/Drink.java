@@ -24,4 +24,7 @@ public class Drink {
 
     @Column(name = "drink_image_vc", nullable = false)
     private String image;
+
+    @Column(name = "drink_stock_in", nullable = false)
+    private int stock;
 }

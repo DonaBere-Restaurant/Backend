@@ -4,7 +4,6 @@ import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.AuthRespo
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.LoginDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserProfileDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.UserRegisterDTO;
-import com.hampcode.restaurant_reservation.restaurantbereapi.repository.UserRepository;
 import com.hampcode.restaurant_reservation.restaurantbereapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
