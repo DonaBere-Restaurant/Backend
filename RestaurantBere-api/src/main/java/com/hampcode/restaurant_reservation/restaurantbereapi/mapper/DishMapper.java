@@ -3,7 +3,7 @@ package com.hampcode.restaurant_reservation.restaurantbereapi.mapper;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishRequestDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.dto.DishResponseDTO;
 import com.hampcode.restaurant_reservation.restaurantbereapi.model.entity.Dish;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DishMapper {
 
     private final ModelMapper modelMapper;
