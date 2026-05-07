@@ -1,25 +1,11 @@
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-RUN apt-get update && \
-    apt-get install -y libfreetype6 libxrender1 libfontconfig1 && \
-    rm -rf /var/lib/apt/lists/*
-
-ARG JAR_FILE=target/Bere-api-0.0.1.jar
-
-COPY ${JAR_FILE} bere-api.jar
-
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/Bere-api-0.0.1.jar bere-api.jar
 EXPOSE 8080
-
-ENTRYPOINT ["java","-jar","bere-api.jar"]FROM eclipse-temurin:21-jdk-slim
-
-RUN apt-get update && \
-    apt-get install -y libfreetype6 libxrender1 libfontconfig1 && \
-    rm -rf /var/lib/apt/lists/*
-
-ARG JAR_FILE=target/Bere-api-0.0.1.jar
-
-COPY ${JAR_FILE} bere-api.jar
-
-EXPOSE 8080
-
 ENTRYPOINT ["java","-jar","bere-api.jar"]
