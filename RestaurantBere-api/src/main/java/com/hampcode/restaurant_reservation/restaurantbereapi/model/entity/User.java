@@ -26,4 +26,10 @@ public class User {
     @JoinColumn(name = "role_id", referencedColumnName = "rol_id")
     private Role role;
 
+    @Column(name = "fingerprint_enabled", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean fingerprintEnabled;
+
+    @Column(name = "fingerprint_public_key", columnDefinition = "TEXT")
+    private String fingerprintPublicKey;
+
 }

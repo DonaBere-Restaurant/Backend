@@ -3,6 +3,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\DrinkServiceI
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\CustomResenaDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\ReservationResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\OrderMapper.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\BiometricLoginDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\DishServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\IzipayOrderResponseDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\OrderDrinkRequestDTO.class
@@ -55,6 +56,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\config\CORSConfig.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\ReservationServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\IzipayServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\UserServiceImpl.class
+com\hampcode\restaurant_reservation\restaurantbereapi\service\BiometricTokenService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\RestExceptionHandler.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\ResTableRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\GraphServiceImpl.class
@@ -63,6 +65,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\UserRegisterDTO.
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\RoleRepository.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrink.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\DrinkResponseDTO.class
+com\hampcode\restaurant_reservation\restaurantbereapi\service\BiometricService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\api\AuthController.class
 com\hampcode\restaurant_reservation\restaurantbereapi\config\ModelMapperConfig.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\Reservation.class
@@ -77,6 +80,7 @@ com\hampcode\restaurant_reservation\restaurantbereapi\model\entity\OrderDrinkId.
 com\hampcode\restaurant_reservation\restaurantbereapi\service\CustomerService.class
 com\hampcode\restaurant_reservation\restaurantbereapi\service\impl\IUploadFileServiceImpl.class
 com\hampcode\restaurant_reservation\restaurantbereapi\repository\OrderDrinkRepository.class
+com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\RegisterFingerprintDTO.class
 com\hampcode\restaurant_reservation\restaurantbereapi\security\JWTFilter.class
 com\hampcode\restaurant_reservation\restaurantbereapi\mapper\ResTableMapper.class
 com\hampcode\restaurant_reservation\restaurantbereapi\model\dto\IzipayOrderRequestDTO.class
